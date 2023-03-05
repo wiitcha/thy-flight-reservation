@@ -1,8 +1,7 @@
-package com.iau.flight_management.model.reservation;
+package com.iau.flight_management.model.entity;
 
 import javax.persistence.*;
 
-import com.iau.flight_management.model.user.Member;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,6 +25,7 @@ public class Reservation {
     private String status;
 
     @Column(name = "date")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 
     @Column(name = "isFlexible")
@@ -34,14 +34,23 @@ public class Reservation {
     @Column(name = "hasExtraLuggage")
     private boolean hasExtraLuggage;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "reservation")
-    private List<Flight> flights;
-
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id")
     private Payment payment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservations")
     public Member member;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "flight_reservation",
+            joinColumns = @JoinColumn(name = "reservation_id"),
+            inverseJoinColumns = @JoinColumn(name = "flight_id"))
+    public List<Flight> flights;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "reservation_passenger",
+            joinColumns = @JoinColumn(name = "reservation_id"),
+            inverseJoinColumns = @JoinColumn(name = "passenger_id"))
+    public List<Passenger> passengers;
 }

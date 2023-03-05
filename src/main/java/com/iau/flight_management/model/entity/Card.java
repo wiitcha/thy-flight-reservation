@@ -1,7 +1,7 @@
-package com.iau.flight_management.model.reservation;
+package com.iau.flight_management.model.entity;
 
-import com.iau.flight_management.model.user.Member;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -21,11 +22,11 @@ public class Card {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "type")
     private String type;
-
-    @Column(name = "brand")
-    private String brand;
 
     @Column(name = "number")
     private String number;
@@ -34,7 +35,7 @@ public class Card {
     private String cvv;
 
     @Column(name = "exp_date")
-    private Date expDate;
+    private String expDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cards")

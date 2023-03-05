@@ -1,4 +1,4 @@
-package com.iau.flight_management.model.reservation;
+package com.iau.flight_management.model.entity;
 
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,10 +17,13 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "total")
+    private double total;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservations")
     private Card card;
 
-    @OneToOne(mappedBy = "payment")
+    @OneToOne(mappedBy = "payment", fetch = FetchType.LAZY)
     private Reservation reservation;
 }

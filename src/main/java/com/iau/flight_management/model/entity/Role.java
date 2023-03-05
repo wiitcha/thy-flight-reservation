@@ -1,9 +1,11 @@
-package com.iau.flight_management.model.user;
+package com.iau.flight_management.model.entity;
 
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor

@@ -1,4 +1,4 @@
-package com.iau.flight_management.model.reservation;
+package com.iau.flight_management.model.entity;
 
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,8 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
 import java.sql.Time;
+import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -18,7 +19,7 @@ import java.sql.Time;
 public class Flight {
 
     @Id
-    @Column
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -35,9 +36,9 @@ public class Flight {
     private Time arrivalTime;
 
     @Column(name = "date")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "flights")
-    private Reservation reservation;
+    @ManyToMany(mappedBy = "flights", fetch = FetchType.LAZY)
+    private List<Reservation> reservations;
 }
