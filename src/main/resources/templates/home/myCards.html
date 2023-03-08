@@ -138,6 +138,7 @@
             height: 100vh;
             background-color: var(--bg-color);
             padding: 20px;
+            background-color: #303c44;
         }
 
         .card img {
@@ -214,11 +215,26 @@
             font-weight: bold;
             font-size: 16px;
             transition: background-color 0.2s ease-in-out;
+            text-decoration: none;
         }
 
         .edit-button:hover {
             background-color: #D58B00;
             cursor: pointer;
+        }
+
+        #plus {
+            font-size: 20px;
+        }
+
+        #plus a {
+            padding: 5px 10px;
+            color: #272e3b;
+            transition: .2s;
+        }
+
+        #plus a:hover {
+            color: #7792a9
         }
 
     </style>
@@ -237,29 +253,34 @@
     </div>
 </nav>
 
-<span th:if="${hasAnyCard}">
+<span th:if="${hasAnyCard} and ${param.edit == null} and !${param.new}">
     <div class="cards-container">
-    <div th:each="card : ${cards}" class="card">
-        <i class="fa fa-times" title="Remove card" aria-hidden="true"></i>
-        <img src="https://www.debt.org/wp-content/uploads/2012/12/Credit-Card.gif" alt="Card Image">
-        <div class="card-details">
-            <h2 th:text="${card.getName()}"></h2>
-            <hr>
-            <p class="card-number">**** **** **** <span th:text="${card.getNumber().substring(12)}"></span></p>
-            <button class="edit-button mb-2">Edit Card</button>
+        <div th:each="card : ${cards}" class="card">
+            <i class="fa fa-times" title="Remove card" aria-hidden="true"></i>
+            <img src="https://www.debt.org/wp-content/uploads/2012/12/Credit-Card.gif" alt="Card Image">
+            <div class="card-details">
+                <h2 th:text="${card.getName()}"></h2>
+                <hr>
+                <p class="card-number">**** **** **** <span th:text="${card.getNumber().substring(12)}"></span></p>
+                <a th:href="@{/home/cards(edit=${card.getId()})}" class="btn edit-button mb-2">Edit card</a>
+            </div>
+        </div>
+        <div class="card" id="plus">
+            <a th:href="@{/home/cards(new)}" ><i class="fa fa-plus" aria-hidden="true"></i></a>
         </div>
     </div>
-</div>
 </span>
 
-<span th:if="!${hasAnyCard}">
+<span th:if="!${hasAnyCard} or (${param.edit != null}) or ${param.new}">
     <div class="center">
     <form class="credit-card-form" method="post" th:object="${card}" th:action="@{/home/cards}">
-        <h2 class="mb-4">Add a new card</h2>
+        <span th:if="${param.edit}"><h2 class="mb-4">Edit card</h2></span>
+        <span th:if="!${param.edit} "><h2 class="mb-4">Add a new card</h2></span>
         <hr>
         <div class="form-group">
+
             <label for="card-name">Card Name*</label>
-            <input type="text" class="form-control" id="card-name" name="name" placeholder="Enter card name" required>
+            <input type="text" th:value="${cardEdit != null} ? ${cardEdit.getName()}: ''" class="form-control" id="card-name" name="name" placeholder="Enter card name" required>
         </div>
         <div class="form-group dropdown">
             <label for="card-type">Card Type*</label>
@@ -276,26 +297,28 @@
         <div class="form-group">
             <label for="card-number">Card Number*</label>
             <input type="text"
+                   th:value="${cardEdit} ? ${cardEdit.getNumber()}: ''"
                    class="form-control"
                    pattern="^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5
             [0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$"
+                   maxlength="16"
                    id="card-number" name="number" placeholder="Enter card number" required>
         </div>
         <div class="form-group">
-            <label for="name">Name on Card*</label>
-            <input type="text" class="form-control" id="name" name="name" placeholder="Enter name on card" required>
+            <label for="card-holder">Name on Card*</label>
+            <input type="text" th:value="${cardEdit} ? ${cardEdit.getCardHolder()}: ''" class="form-control" id="card-holder" name="cardHolder" placeholder="Enter name on card" required>
         </div>
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label for="expiry-date">Expiration Date*</label>
-                <input type="text" pattern="([0-9]{2}[/]?){2}" class="form-control" name="expDate" id="expiry-date" placeholder="MM/YY" required>
+                <input type="text" th:value="${cardEdit} ? ${cardEdit.getExpDate()}: ''" pattern="([0-9]{2}[/]?){2}" class="form-control" name="expDate" id="expiry-date" placeholder="MM/YY" required>
             </div>
             <div class="form-group col-md-6">
                 <label for="cvv">Security Code*</label>
-                <input type="text" class="form-control" id="cvv" name="cvv" placeholder="Enter CVV" required>
+                <input type="text" th:value="${cardEdit} ? ${cardEdit.getCvv()}: ''" class="form-control" id="cvv" name="cvv" placeholder="Enter CVV" required>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Save</button>
     </form>
 </div>
 </span>

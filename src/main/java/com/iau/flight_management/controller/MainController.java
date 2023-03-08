@@ -6,26 +6,30 @@ import com.iau.flight_management.model.entity.Member;
 import com.iau.flight_management.repository.CardRepository;
 import com.iau.flight_management.repository.MemberRepository;
 import com.iau.flight_management.security.config.JwtService;
+import com.iau.flight_management.service.CardService;
+import com.iau.flight_management.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
+@SessionAttributes("Authorization")
 @RequestMapping("/home")
 public class MainController {
 
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
+
+    private final MemberService memberService;
+    private final CardService cardService;
 
     private final CardRepository cardRepository;
 
@@ -36,35 +40,32 @@ public class MainController {
     }
 
     @GetMapping("/cards")
-    public String showMyCards(Model model,
-            HttpServletRequest request) {
-        boolean hasAnyCard;
-        String token = request.getSession().getAttribute("Authorization").toString();
+    public String showMyCards(@RequestParam(value = "edit", required = false) Long cardId,
+                            @ModelAttribute("Authorization") String token,
+                            Model model,
+                            HttpServletRequest request) {
+
         String email = jwtService.extractUsername(token);
 
-        if (memberRepository.existsByEmail(email)) {
-            Member member = memberRepository.findByEmail(email).get();
+        if (memberService.existsByEmail(email)) {
+            Member member = memberService.findByEmail(email).get();
 
-            if (member.getCards().isEmpty()) {
-                hasAnyCard = false;
-            } else {
-                hasAnyCard= true;
-                model.addAttribute("cards", member.getCards());
+            if (cardId != null) {
+                return cardService.editCard(cardId, member, model);
             }
 
-            model.addAttribute("hasAnyCard", hasAnyCard);
-
-            return "home/myCards";
+            return cardService.showMyCards(member, model);
         }
 
         return "redirect:/home?logout"; // for security
     }
 
     @PostMapping("/cards")
-    public String addCard(@ModelAttribute("card") CardDTO cardDTO,
+    public String addCard(@ModelAttribute("Authorization") String token,
+            @ModelAttribute("cardObject") CardDTO cardDTO,
                           HttpServletRequest request) {
 
-        String token = request.getSession().getAttribute("Authorization").toString();
+        //String token = request.getSession().getAttribute("Authorization").toString();
         String email = jwtService.extractUsername(token);
 
         if (memberRepository.existsByEmail(email)) {
@@ -75,26 +76,32 @@ public class MainController {
 
             if (!cards.isEmpty()) {
                 for (Card card : cards) {
-                    if (card.getNumber().equals(cardDTO.getNumber())) {
+                    if (card.getNumber().equals(cardDTO.getNumber())) { // check if the user is trying to save the same card
                         return "redirect:/home/cards?error";
                     }
                 }
+            } else {
+                Card card = Card.builder()
+                        .name(cardDTO.getName())
+                        .type(cardDTO.getType())
+                        .number(cardDTO.getNumber())
+                        .cardHolder(cardDTO.getCardHolder())
+                        .cvv(cardDTO.getCvv())
+                        .expDate(cardDTO.getExpDate())
+                        .member(member)
+                        .build();
+
+                cardRepository.save(card);
+                return "redirect:/home/cards?success";
             }
-
-            Card card = Card.builder()
-                    .name(cardDTO.getName())
-                    .type(cardDTO.getType())
-                    .number(cardDTO.getNumber())
-                    .cvv(cardDTO.getCvv())
-                    .expDate(cardDTO.getExpDate())
-                    .member(member).build();
-
-            cardRepository.save(card);
-
-            return "redirect:/home/cards?success";
         }
         return "redirect:/home?logout"; // for security
     }
+
+    /*@PostMapping(@ModelAttribute("Authorization") String token)
+    public String deleteCard() {
+
+    }*/
 
     @GetMapping("/flights")
     public String showMyFlight() {

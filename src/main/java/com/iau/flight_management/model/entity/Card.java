@@ -1,15 +1,13 @@
 package com.iau.flight_management.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,6 +28,9 @@ public class Card {
 
     @Column(name = "number")
     private String number;
+
+    @Column(name = "card_holder")
+    private String cardHolder;
 
     @Column(name = "cvv")
     private String cvv;
