@@ -164,7 +164,7 @@
             position: relative;
         }
 
-        .card .fa-times {
+        .card .delete-button {
             position: absolute;
             top: 10px;
             left: 10px;
@@ -178,7 +178,7 @@
             transition: .2s;
         }
 
-        .card .fa-times:hover {
+        .card .delete-button:hover {
             color: red;
         }
 
@@ -256,7 +256,7 @@
 <span th:if="${hasAnyCard} and ${param.edit == null} and !${param.new}">
     <div class="cards-container">
         <div th:each="card : ${cards}" class="card">
-            <i class="fa fa-times" title="Remove card" aria-hidden="true"></i>
+            <a class="delete-button" th:href="@{/home/cards/delete(id=${card.getId()})}"><i class="fa fa-times" title="Remove card" aria-hidden="true"></i></a>
             <img src="https://www.debt.org/wp-content/uploads/2012/12/Credit-Card.gif" alt="Card Image">
             <div class="card-details">
                 <h2 th:text="${card.getName()}"></h2>
@@ -274,6 +274,11 @@
 <span th:if="!${hasAnyCard} or (${param.edit != null}) or ${param.new}">
     <div class="center">
     <form class="credit-card-form" method="post" th:object="${card}" th:action="@{/home/cards}">
+        <div th:if="${param.deleteSuccess}">
+                <div class="alert alert-success col-xs-offset-1 col-xs-10 text-center">
+                    <em>Card successfully deleted!</em>
+                </div>
+            </div>
         <span th:if="${param.edit}"><h2 class="mb-4">Edit card</h2></span>
         <span th:if="!${param.edit} "><h2 class="mb-4">Add a new card</h2></span>
         <hr>
