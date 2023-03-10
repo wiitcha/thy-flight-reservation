@@ -256,7 +256,9 @@
 <span th:if="${hasAnyCard} and ${param.edit == null} and !${param.new}">
     <div class="cards-container">
         <div th:each="card : ${cards}" class="card">
-            <a class="delete-button" th:href="@{/home/cards/delete(id=${card.getId()})}"><i class="fa fa-times" title="Remove card" aria-hidden="true"></i></a>
+            <a class="delete-button" th:href="@{/home/cards/delete(id=${card.getId()})}">
+                <i class="fa fa-times" title="Remove card" aria-hidden="true"></i>
+            </a>
             <img src="https://www.debt.org/wp-content/uploads/2012/12/Credit-Card.gif" alt="Card Image">
             <div class="card-details">
                 <h2 th:text="${card.getName()}"></h2>
@@ -289,7 +291,7 @@
         </div>
         <div class="form-group dropdown">
             <label for="card-type">Card Type*</label>
-            <select id="card-type" name="type">
+            <select id="card-type" name="type" class="form-control w-50 text-center">
                 <option value="VISA">VISA</option>
                 <option value="MASTERCARD">MASTERCARD</option>
                 <option value="AMEX">AMEX</option>

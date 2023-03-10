@@ -52,6 +52,7 @@
             font-family: Arial, sans-serif;
             font-size: 16px;
             color: #333;
+            background-color: #384454;
         }
         /* Navbar styles */
         .navbar {
@@ -146,7 +147,6 @@
 
         /* Change the background color of the dropdown button when the dropdown content is shown */
         .dropdown:hover .dropbutton {
-
             background-color: #656e71;
         }
 
@@ -165,7 +165,8 @@
             background-color: #fff;
             padding: 40px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            /*box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);*/
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
             max-width: 1000px;
             width: 100%;
         }
@@ -207,8 +208,8 @@
         }
 
         .radio-group input[type="radio"]:checked + label::before {
-            background-color: #f50057;
-            border-color: #f50057;
+            background-color: #f01c34;
+            border-color: #f01c34;
         }
 
         .radio-group input[type="radio"]:focus + label::before {
@@ -220,44 +221,86 @@
         }
 
         .search-button {
-            background-color: #E30B5D;
+            background-color: #f01c34;
+            color: whitesmoke;
             border: none;
             margin-top: 20px;
+            transition: .2s;
         }
 
         .search-button:hover {
-            background-color: #C1074D;
+            background-color: #ff3444;
+            color: whitesmoke;
         }
 
-        /* Turkish Airlines color palette */
-
-        h1, h2, h3, h4, h5, h6 {
-            color: var(--color-primary);
+        #departure-airport-filtered-list,
+        #arrival-airport-filtered-list {
+            position: absolute;
         }
 
-        a {
-            color: var(--color-primary);
+        #departure-airport-filtered-list a,
+        #arrival-airport-filtered-list a {
+            z-index: 1;
+            cursor: pointer;
         }
 
-        .btn-primary {
-            background-color: var(--color-primary);
-            border-color: var(--color-primary);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--color-primary-dark);
-            border-color: var(--color-primary-dark);
-        }
-
-        .form-check-input:checked+.form-check-label {
-            color: var(--color-primary);
-        }
-
-        .form-check-input:focus+.form-check-label {
-            color: var(--color-primary);
-        }
     </style>
-    <script>
+    <script th:inline="javascript">
+        let airports = [];
+
+        document.addEventListener("click", function(event) {
+            const airportDepartureDiv = document.getElementById("departure");
+            const airportArrivalDiv = document.getElementById("arrival");
+            const airportFromFilter = document.getElementById("arrival-airport-filtered-list");
+            const airportToFilter = document.getElementById("departure-airport-filtered-list");
+
+            let isClickInsideDepartureDiv = airportDepartureDiv.contains(event.target);
+            let isClickInsideArrivalDiv = airportArrivalDiv.contains(event.target);
+
+            if ((!isClickInsideDepartureDiv && !isClickInsideArrivalDiv)) {
+                airportFromFilter.style.display = "none";
+                airportToFilter.style.display = "none";
+            }
+        });
+
+        function getAirports() {
+            let airportsUrl = 'https://airlabs.co/api/v9/airports?_fields=name,iata_code,icao_code&api_key=fe63f32c-47c5-466e-8e16-0a14a30d6f75';
+            fetch(airportsUrl)
+                .then((response) => response.json())
+                .then((data) => {
+                    airports = data.response;
+                });
+        }
+
+        function filterAirports(inputFieldId, airportFilterId) {
+            const airportInput = document.getElementById(inputFieldId);
+            const airportSelect = document.getElementById(airportFilterId);
+            airportSelect.innerHTML = '';
+
+            const filterText = airportInput.value;
+            const filteredAirports = [].concat(airports.filter(airport => airport.name.toLocaleLowerCase().indexOf(filterText.toLocaleLowerCase()) >= 0));
+
+            for(let i = 0; i < filteredAirports.length && i < 5; i++) {
+                const airport = document.createElement("a");
+                const obj = filteredAirports[i];
+                airport.className = "list-group-item list-group-item-action";
+                airport.text = obj.name;
+                airport.title = obj.iata_code + ',' + obj.icao_code;
+                airport.href = '#';
+                airport.setAttribute("onclick", "updateValue('"+inputFieldId+"','"+obj.name.replace('\'', ' ') + "','"+airportFilterId+"');")
+                airportSelect.appendChild(airport);
+            }
+        }
+
+        function showFilters(airportFilterId) {
+            document.getElementById(airportFilterId).style.display = 'block';
+        }
+
+        function updateValue(inputFieldId, value, airportFilterId) {
+            document.getElementById(inputFieldId).value = value;
+            document.getElementById(airportFilterId).style.display = 'none';
+        }
+
         function showTrip(tripType) {
                 if (tripType == 1) {
                     document.getElementById('return-div').style.display= 'none';
@@ -267,7 +310,7 @@
         }
     </script>
 </head>
-<body>
+<body onload="getAirports()">
 <nav class="navbar">
     <div class="navbar-logo">
         <a th:href="@{/home}"><img src="https://cdn.turkishairlines.com/m/2190da9e53a70e4e/original/THY-LOGO.png"
@@ -295,15 +338,23 @@
             </div>
                 <div class="row">
                     <div class="col-md-3">
-                        <div class="form-group">
+                        <div class="form-group departure">
                             <label for="from-input">From</label>
-                            <input type="text" class="form-control" id="from-input">
+                            <div id="departure">
+                                <input type="text" onfocus="showFilters('departure-airport-filtered-list')" id="from-input" class="form-control"
+                                       onkeyup="filterAirports('from-input', 'departure-airport-filtered-list')">
+                                <div class="list-group" id="departure-airport-filtered-list"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="to-input">To</label>
-                            <input type="text" class="form-control" id="to-input">
+                            <div id="arrival">
+                                <input type="text" onfocus="showFilters('arrival-airport-filtered-list')" class="form-control" id="to-input"
+                                       onkeyup="filterAirports('to-input', 'arrival-airport-filtered-list')">
+                                <div class="list-group" id="arrival-airport-filtered-list"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -332,7 +383,7 @@
                         </div>
                     </div>
                     <div class="col-md-12">
-                        <button class="btn btn-primary search-button">Search Flights</button>
+                        <button class="btn search-button">Search Flights</button>
                     </div>
                 </div>
         </div>

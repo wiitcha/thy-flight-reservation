@@ -1,4 +1,4 @@
-package com.iau.flight_management.security.config;
+package com.iau.flight_management.model.entity.security.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
