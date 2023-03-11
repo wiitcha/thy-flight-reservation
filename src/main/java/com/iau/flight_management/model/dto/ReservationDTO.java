@@ -1,6 +1,7 @@
 package com.iau.flight_management.model.dto;
 
 import com.iau.flight_management.model.entity.Flight;
+import com.iau.flight_management.model.entity.Passenger;
 import com.iau.flight_management.model.entity.Payment;
 import com.iau.flight_management.model.entity.Member;
 import lombok.AllArgsConstructor;
@@ -23,4 +24,5 @@ public class ReservationDTO {
     private Payment payment;
     public Member member;
     public List<Flight> flights;
+    public List<Passenger> passengers;
 }

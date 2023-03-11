@@ -49,7 +49,6 @@
         body {
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
             font-size: 16px;
             color: #333;
             background-color: #384454;
@@ -107,7 +106,7 @@
         .dropdown-content {
             display: none;
             position: absolute;
-            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
             z-index: 1;
             margin-top: 5px;
         }
@@ -264,7 +263,7 @@
         });
 
         function getAirports() {
-            let airportsUrl = 'https://airlabs.co/api/v9/airports?_fields=name,iata_code,icao_code&api_key=fe63f32c-47c5-466e-8e16-0a14a30d6f75';
+            let airportsUrl = 'https://airlabs.co/api/v9/airports?_fields=name,city,iata_code,icao_code&api_key=fe63f32c-47c5-466e-8e16-0a14a30d6f75';
             fetch(airportsUrl)
                 .then((response) => response.json())
                 .then((data) => {
@@ -272,9 +271,10 @@
                 });
         }
 
-        function filterAirports(inputFieldId, airportFilterId) {
+        function filterAirports(inputFieldId, airportFilterId, airportCodesId) {
             const airportInput = document.getElementById(inputFieldId);
             const airportSelect = document.getElementById(airportFilterId);
+            const airportCodes = document.getElementById(airportCodesId);
             airportSelect.innerHTML = '';
 
             const filterText = airportInput.value;
@@ -283,11 +283,19 @@
             for(let i = 0; i < filteredAirports.length && i < 5; i++) {
                 const airport = document.createElement("a");
                 const obj = filteredAirports[i];
+                let city = [];
                 airport.className = "list-group-item list-group-item-action";
                 airport.text = obj.name;
-                airport.title = obj.iata_code + ',' + obj.icao_code;
+
+                if (obj.name.substring(0, obj.name.indexOf(' ')).length < 4) { // for appropriate city name beacause city name is not provided in free plan of data api
+                    const airportNameArray = obj.name.split(" ");
+                    city = airportNameArray[0].concat(" ", airportNameArray[1]);
+                } else {
+                    city = obj.name.substring(0, obj.name.indexOf(' '));
+                }
+                airport.title = city + ',' + obj.iata_code + ',' + obj.icao_code;
                 airport.href = '#';
-                airport.setAttribute("onclick", "updateValue('"+inputFieldId+"','"+obj.name.replace('\'', ' ') + "','"+airportFilterId+"');")
+                airport.setAttribute("onclick", "updateValue('"+inputFieldId+"','"+obj.name.replace('\'', ' ') + "','"+airportFilterId+"','"+airport.title+"','"+airportCodesId+"');")
                 airportSelect.appendChild(airport);
             }
         }
@@ -296,8 +304,10 @@
             document.getElementById(airportFilterId).style.display = 'block';
         }
 
-        function updateValue(inputFieldId, value, airportFilterId) {
+        function updateValue(inputFieldId, value, airportFilterId, airportTitle, airportCodesId) {
             document.getElementById(inputFieldId).value = value;
+            document.getElementById(airportCodesId).value = airportTitle;
+            //document.getElementById(inputFieldId).title = airportTitle;
             document.getElementById(airportFilterId).style.display = 'none';
         }
 
@@ -327,65 +337,70 @@
 
 <div class="container">
        <div class="search-box">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="radio-group">
-                        <input type="radio" name="flight-type" id="one-way" value="one-way" onclick="showTrip(1)" checked>
-                        <label for="one-way">One Way</label>
-                        <input type="radio" name="flight-type" id="round-trip" value="round-trip" onclick="showTrip(2)">
-                        <label for="round-trip">Round Trip</label>
-                    </div>
-            </div>
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="form-group departure">
-                            <label for="from-input">From</label>
-                            <div id="departure">
-                                <input type="text" onfocus="showFilters('departure-airport-filtered-list')" id="from-input" class="form-control"
-                                       onkeyup="filterAirports('from-input', 'departure-airport-filtered-list')">
-                                <div class="list-group" id="departure-airport-filtered-list"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="to-input">To</label>
-                            <div id="arrival">
-                                <input type="text" onfocus="showFilters('arrival-airport-filtered-list')" class="form-control" id="to-input"
-                                       onkeyup="filterAirports('to-input', 'arrival-airport-filtered-list')">
-                                <div class="list-group" id="arrival-airport-filtered-list"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="departure-date-input">Departure Date</label>
-                            <input type="date" class="form-control" id="departure-date-input">
-                        </div>
-                    </div>
-                    <div class="col-md-2" id="return-div">
-                        <div class="form-group">
-                            <label for="return-date-input">Return Date</label>
-                            <input type="date" class="form-control" id="return-date-input">
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="passengers-select">Passengers</label>
-                            <select class="form-control" id="passengers-select">
-                                <option value="1">1 Passenger</option>
-                                <option value="2">2 Passengers</option>
-                                <option value="3">3 Passengers</option>
-                                <option value="4">4 Passengers</option>
-                                <option value="5">5 Passengers</option>
-                                <option value="6">6 Passengers</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <button class="btn search-button">Search Flights</button>
-                    </div>
-                </div>
+           <form method="post" th:action="@{/flights}">
+               <div class="row">
+                   <div class="col-md-6">
+                       <div class="radio-group">
+                           <input type="radio" name="flight-type" id="one-way" value="one-way" onclick="showTrip(1)" checked>
+                           <label for="one-way">One Way</label>
+                           <input type="radio" name="flight-type" id="round-trip" value="round-trip" onclick="showTrip(2)">
+                           <label for="round-trip">Round Trip</label>
+                       </div>
+                   </div>
+                   <div class="row">
+                       <div class="col-md-3">
+                           <div class="form-group departure">
+                               <label for="from-input">From</label>
+                               <div id="departure">
+                                   <input type="text" name="departure-airport" onfocus="showFilters('departure-airport-filtered-list')" id="from-input" class="form-control"
+                                          onkeyup="filterAirports('from-input', 'departure-airport-filtered-list', 'departure-airport-codes')" required>
+                                   <div class="list-group" id="departure-airport-filtered-list"></div>
+                                   <input type="text" id="departure-airport-codes" name="departure-airport-codes" style="display: none">
+                               </div>
+                           </div>
+                       </div>
+                       <div class="col-md-3">
+                           <div class="form-group">
+                               <label for="to-input">To</label>
+                               <div id="arrival">
+                                   <input type="text" name="arrival-airport" onfocus="showFilters('arrival-airport-filtered-list')" class="form-control" id="to-input"
+                                          onkeyup="filterAirports('to-input', 'arrival-airport-filtered-list', 'arrival-airport-codes')" required>
+                                   <div class="list-group" id="arrival-airport-filtered-list"></div>
+                                   <input type="text" id="arrival-airport-codes" name="arrival-airport-codes" style="display: none">
+                               </div>
+                           </div>
+                       </div>
+                       <div class="col-md-2">
+                           <div class="form-group">
+                               <label for="departure-date-input">Departure Date</label>
+                               <input type="date" name="departure-date" class="form-control" id="departure-date-input">
+                           </div>
+                       </div>
+                       <div class="col-md-2" id="return-div">
+                           <div class="form-group">
+                               <label for="return-date-input">Return Date</label>
+                               <input type="date" name="arrival-date" class="form-control" id="return-date-input">
+                           </div>
+                       </div>
+                       <div class="col-md-2">
+                           <div class="form-group">
+                               <label for="passengers-select">Passengers</label>
+                               <select name="passengers" class="form-control" id="passengers-select">
+                                   <option value="1">1 Passenger</option>
+                                   <option value="2">2 Passengers</option>
+                                   <option value="3">3 Passengers</option>
+                                   <option value="4">4 Passengers</option>
+                                   <option value="5">5 Passengers</option>
+                                   <option value="6">6 Passengers</option>
+                               </select>
+                           </div>
+                       </div>
+                       <div class="col-md-12">
+                           <button class="btn search-button">Search Flights</button>
+                       </div>
+                   </div>
+               </div>
+           </form>
         </div>
     </div>
 </div>

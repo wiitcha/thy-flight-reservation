@@ -21,4 +21,11 @@ public class FlightDTO {
     private Time arrivalTime;
     private Date date;
     private List<Reservation> reservations;
+    private String arr_iata;
+    private String dep_iata;
+    private String arr_time;
+    private String dep_time;
+    private String duration;
+    private String flight_iata;
+    private String status;
 }

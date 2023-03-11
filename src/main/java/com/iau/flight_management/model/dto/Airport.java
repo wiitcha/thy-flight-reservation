@@ -9,6 +9,7 @@ import lombok.*;
 public class Airport {
 
     private String name;
+    private String city;
     private String iata_code;
     private String icao_code;
     private String country_code;
