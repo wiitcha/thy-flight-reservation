@@ -178,7 +178,7 @@
         }
         .per-passenger {
             color: #697886;
-            font-size: 12px;
+            font-size: 10px;
         }
 
         .try {
@@ -247,13 +247,15 @@
                 document.getElementById("inbound").className = "d-none";
                 document.getElementById("outbound").className = "";
                 document.getElementById("payment-page").className = "d-none";
+
+                hideReturnFlights();
             } else {
                 if (searchParameters.flightType === "one-way") {
                     selectedFlights.splice(0, selectedFlights.length);
+                    document.getElementById("outbound").className = "";
+                    document.getElementById("payment-page").className = "d-none";
                 }
                 hideReturnFlights();
-                document.getElementById("outbound").className = "";
-                document.getElementById("payment-page").className = "d-none";
             }
 
             document.getElementById("passengers").style.display = "none";
@@ -262,13 +264,6 @@
         function hideReturnFlights() {
             const tableBody = document.getElementById("table-body")
             for (let i = flights.length; i < tableBody.childElementCount; i++) {
-                tableBody.children.item(i).className = "d-none";
-            }
-        }
-
-        function hideDepartureFlights() {
-            const tableBody = document.getElementById("table-body")
-            for (let i = 0; i < flights.length; i++) {
                 tableBody.children.item(i).className = "d-none";
             }
         }
