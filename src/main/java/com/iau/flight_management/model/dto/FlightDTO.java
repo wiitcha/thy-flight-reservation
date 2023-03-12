@@ -15,10 +15,10 @@ import java.util.List;
 public class FlightDTO {
 
     private Long id;
-    private String departure;
-    private String destination;
-    private Time departureTime;
-    private Time arrivalTime;
+    private String departureAirport;
+    private String departureCity;
+    private String destinationAirport;
+    private String destinationCity;
     private Date date;
     private List<Reservation> reservations;
     private String arr_iata;
@@ -28,4 +28,5 @@ public class FlightDTO {
     private String duration;
     private String flight_iata;
     private String status;
+    private int price;
 }

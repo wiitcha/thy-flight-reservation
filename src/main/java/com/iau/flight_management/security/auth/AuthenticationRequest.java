@@ -1,4 +1,4 @@
-package com.iau.flight_management.model.entity.security.auth;
+package com.iau.flight_management.security.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

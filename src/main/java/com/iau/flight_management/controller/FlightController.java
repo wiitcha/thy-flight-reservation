@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -21,12 +22,17 @@ public class FlightController {
 
     @PostMapping
     public String searchFlights(Model model,
-                                @RequestBody MultiValueMap<String, String> formData) throws IOException, InterruptedException {
+                                @RequestBody MultiValueMap<String, String> formData,
+                                HttpServletRequest request) throws IOException, InterruptedException {
 
         HashMap<String, String> searchParameters= flightService.extractSearchParameters(formData);
 
         model.addAttribute("flights", flightService.getSearchedFlights(searchParameters));
         model.addAttribute("searchParameters", searchParameters);
+
+        request.getSession().setAttribute("Flight_Details", searchParameters);
+
+
         //model.addAttribute("flightSearchAPIToken", flightService.generateFlightSearchAPIToken(searchParameters));
 
         return "home/flights";

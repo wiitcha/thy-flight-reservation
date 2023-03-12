@@ -2,7 +2,7 @@ package com.iau.flight_management.controller;
 
 import com.iau.flight_management.model.dto.CardDTO;
 import com.iau.flight_management.model.entity.Member;
-import com.iau.flight_management.model.entity.security.config.JwtService;
+import com.iau.flight_management.security.config.JwtService;
 import com.iau.flight_management.service.CardService;
 import com.iau.flight_management.service.FlightService;
 import com.iau.flight_management.service.MemberService;

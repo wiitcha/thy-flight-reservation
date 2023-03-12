@@ -14,10 +14,10 @@ import java.util.List;
 public class PassengerDTO {
 
     private Long id;
-    private String name;
-    private String surname;
-    private Date dateOfBirth;
-    private String gender;
-    private String phoneNumber;
+    private String[] name;
+    private String[] surname;
+    private Date[] dateOfBirth;
+    private String[] gender;
+    private String[] phoneNumber;
     public List<Reservation> reservations;
 }

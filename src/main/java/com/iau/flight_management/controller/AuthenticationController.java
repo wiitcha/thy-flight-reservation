@@ -2,7 +2,7 @@ package com.iau.flight_management.controller;
 
 import com.iau.flight_management.model.dto.MemberDTO;
 import com.iau.flight_management.repository.MemberRepository;
-import com.iau.flight_management.model.entity.security.auth.AuthenticationRequest;
+import com.iau.flight_management.security.auth.AuthenticationRequest;
 import com.iau.flight_management.service.AuthenticationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

@@ -102,7 +102,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            /*height: 100vh;*/
         }
 
         thead th {
@@ -132,15 +132,139 @@
         }
 
         tbody tr:hover {
-            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+            /*box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;*/
+            box-shadow: 0 4px 8px 0 rgba(164, 103, 103, 0.05);
+            background-color: #ececec;
             cursor: pointer;
+        }
+
+        .payment {
+            z-index: 1;
+            background-color: #fcfcfc;
+            display: none;
+            padding: 20px;
+            transition: .2s;
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+        }
+
+        .cancel-button {
+            border: 1px solid #f01c34;
+            padding: 5px 10px;
+            color: #f01c34;
+            z-index: 1;
+        }
+
+        .cancel-button:hover {
+            background-color: #f01c34;
+            color: white;
+        }
+
+        .pay-now {
+            background-color: #f01c34;
+            color: white;
+            padding: 20px 10px;
+            justify-self: flex-end;
+            transition: .3s;
+        }
+
+        .pay-now:hover {
+            background-color: #F84659FF;
+            color: white;
+        }
+
+        .price-type {
+            padding: 10px 10px;
+
+        }
+        .per-passenger {
+            color: #697886;
+            font-size: 12px;
+        }
+
+        .try {
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .price {
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .zeros {
+            font-size: 10px;
         }
     </style>
     <script th:inline="javascript">
         /*<![CDATA[*/
         //let flightSearchApiToken = /*[[${flightSearchAPIToken}]]*/ '';
+        let flights = /*[[${flights}]]*/ [];
         let searchParameters = /*[[${searchParameters}]]*/ {};
         /*]]>*/
+
+        let selectedFlights = [];
+
+        function proceedReservation(flightId) {
+            selectedFlights.push(flights.at(flightId - 1));
+
+            if (searchParameters.returnDate.toString().length !== 0 && selectedFlights.length !== 2) {
+
+                document.getElementById("inbound").className = "";
+                document.getElementById("outbound").className = "d-none";
+                showFlights();
+            } else {
+                // const flightList = document.getElementsByName("flight");
+                document.getElementById("inbound").className = "d-none";
+                document.getElementById("outbound").className = "d-none";
+                document.getElementById("payment-page").className = "";
+
+                const tableBody = document.getElementById("table-body")
+
+                for (let i = 0; i < tableBody.childElementCount; i++) {
+                    tableBody.children.item(i).className = "d-none";
+                }
+
+                document.getElementById(selectedFlights[0].id).className = "pe-none";
+                if (selectedFlights.length > 1) {
+                    document.getElementById(selectedFlights[1].id).className = "pe-none";
+                }
+                document.getElementById("passengers").style.display = "block";
+            }
+
+
+            //let flightDetails = "";
+
+            // for (const detail in searchParameters) {
+            //     flightDetails += searchParameters.detail + ',';
+            // }
+
+           /* for (let key in searchParameters) {
+                if (searchParameters.hasOwnProperty(key)) {
+                    flightDetails += searchParameters[key] + ",";
+                }
+            }
+
+            document.getElementById("flightDetails").value = flightDetails;*/
+        }
+
+        function showFlights() {
+
+            if (selectedFlights.length === 2) {
+                selectedFlights.splice(0, selectedFlights.length);
+                document.getElementById("inbound").className = "d-none";
+                document.getElementById("outbound").className = "";
+                document.getElementById("payment-page").className = "d-none";
+            }
+
+            const tableBody = document.getElementById("table-body")
+
+            for (let i = 0; i < tableBody.childElementCount; i++) {
+                tableBody.children.item(i).className = "";
+            }
+
+            document.getElementById("passengers").style.display = "none";
+
+        }
     </script>
 </head>
 <body>
@@ -159,45 +283,125 @@
 </nav>
 
 <div class="container">
-    <div class="centered-content">
-        <div class="shadow p-3 mb-5 bg-light rounded" style="width: 1000px; height: auto; overflow: auto;">
-            <h3>OUTBOUND FLIGHT</h3>
-            <h2 th:text="${searchParameters.get('departureCity')} + ' to ' + ${searchParameters.get('arrivalCity')} + ' ~ ' + ${searchParameters.get('departureDate')}"></h2>
+    <div class="centered-content mt-5">
+        <div class="shadow p-3 mb-5 bg-light rounded" style="width: 1200px; height: auto; overflow: auto;">
+            <div id="inbound" class="d-none">
+                <h3>INBOUND FLIGHT<i class="fa fa-undo ml-4" aria-hidden="true"></i></h3>
+                <h2 th:text="${searchParameters.get('arrivalCity')} + ' to ' + ${searchParameters.get('departureCity')} + ' | ' + ${searchParameters.get('returnDate')}"></h2>
+            </div>
+            <div id="outbound">
+                <h3>OUTBOUND FLIGHT<i class="fa fa-arrow-right ml-4" aria-hidden="true"></i></h3>
+                <h2 th:text="${searchParameters.get('departureCity')} + ' to ' + ${searchParameters.get('arrivalCity')} + ' | ' + ${searchParameters.get('departureDate')}"></h2>
+            </div>
+            <div id="payment-page" class="d-none">
+                <h3>FLIGHT INFORMATIONS</h3>
+                <h2 th:text="${searchParameters.get('returnDate').length() != 0} ? ${searchParameters.get('departureCity')} + ' to ' + ${searchParameters.get('arrivalCity')} + ' | ' + ${searchParameters.get('departureDate')}
+                    + ' ~ ' + ${searchParameters.get('arrivalCity')} + ' to ' + ${searchParameters.get('departureCity')} + ' | ' + ${searchParameters.get('returnDate')} :
+                    ${searchParameters.get('departureCity')} + ' to ' + ${searchParameters.get('arrivalCity')} + ' | ' + ${searchParameters.get('departureDate')}"></h2>
+            </div>
             <table class="table table-bordered">
                 <thead class="" style="background-color: #687484">
                 <tr>
-                    <th style="width: 25%">FLIGHT</th>
-                    <th style="width: 25%">FROM</th>
-                    <th style="width: 25%">TO</th>
-                    <th style="width: 25%">DURATION</th>
+                    <th style="width: 20%">FLIGHT</th>
+                    <th style="width: 20%">FROM</th>
+                    <th style="width: 20%">TO</th>
+                    <th style="width: 20%">DURATION</th>
+                    <th style="width: 20%">PRICE</th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr th:each="flight : ${flights}">
-                    <td>
-                        <img class="fs-3" src="https://www.turkishairlines.com/theme/img/logo-top-white-small-current.png" height="35px" style="display: inline-block">
-                        <span th:text="${flight.getFlight_iata()}" class="font-weight-bold fs-5"></span>
-                        <p style="color: #6c7c85" class="font-weight-bold fs-7 mt-4">Turkish Airlines</p>
-                    </td>
-                    <td>
-                        <h5 th:class="font-weight-bold" style="color: #0e67e4" th:text="${flight.getDep_time().split(' ')[1]}"></h5>
-                        <div>
-                            <span class="mb-1 d-block font-weight-bold" th:text="${searchParameters.get('departureCity')} + ' (' + ${searchParameters.get('departureAirportIataCode') + ')'}"></span>
-                            <span th:text="${searchParameters.get('departureAirport')}"></span>
-                        </div>
-                    </td>
-                    <td>
-                        <h5 th:class="font-weight-bold" style="color: #0e67e4" th:text="${flight.getArr_time().split(' ')[1]}"></h5>
-                        <div >
-                            <span class="mb-1 d-block font-weight-bold" th:text="${searchParameters.get('arrivalCity')} + ' (' + ${searchParameters.get('arrivalAirportIataCode') + ')'}"></span>
-                            <span th:text="${searchParameters.get('arrivalAirport')}"></span>
-                        </div>
-                    </td>
-                    <td>
-                        <h4 class="font-weight-bold mt-4 text-center" th:text="${flight.getDuration()}"></h4>
-                    </td>
+                <tbody id="table-body">
+                <tr th:each="flight : ${flights}" name="flight" th:id="${flight.getId()}"
+                th:onclick="'proceedReservation(' + ${flight.getId()} + ')'">
+                    <div class="flightInfo">
+                        <td>
+                            <img class="fs-3" src="https://www.turkishairlines.com/theme/img/logo-top-white-small-current.png" height="35px" style="display: inline-block">
+                            <span th:text="${flight.getFlight_iata()}" class="font-weight-bold fs-5"></span>
+                            <p style="color: #6c7c85" class="font-weight-bold fs-7 mt-4">Turkish Airlines</p>
+                        </td>
+                        <td>
+                            <h5 th:class="font-weight-bold" style="color: #0e67e4" th:text="${flight.getDep_time().split(' ')[1]}"></h5>
+                            <div>
+                                <span class="mb-1 d-block font-weight-bold" th:text="${searchParameters.get('departureCity')} + ' (' + ${searchParameters.get('departureAirportIataCode') + ')'}"></span>
+                                <span th:text="${searchParameters.get('departureAirport')}"></span>
+                            </div>
+                        </td>
+                        <td>
+                            <h5 th:class="font-weight-bold" style="color: #0e67e4" th:text="${flight.getArr_time().split(' ')[1]}"></h5>
+                            <div >
+                                <span class="mb-1 d-block font-weight-bold" th:text="${searchParameters.get('arrivalCity')} + ' (' + ${searchParameters.get('arrivalAirportIataCode') + ')'}"></span>
+                                <span th:text="${searchParameters.get('arrivalAirport')}"></span>
+                            </div>
+                        </td>
+                        <td>
+                            <h4 class="font-weight-bold mt-4 text-center" th:text="${flight.getDuration()}"></h4>
+                        </td>
+                        <td>
+                            <div class="price-type ml-4 pl-4">
+                                <div class="per-passenger">Per passenger</div>
+                                <span class="try">TRY</span>
+                                <span class="price" th:text="${flight.getPrice()}"></span>
+                                <span class="zeros">,00</span>
+                            </div>
+
+                        </td>
+                    </div>
+                </tr>
                 </tbody>
             </table>
+            <div class="payment" id="passengers">
+                <a title="Cancel reservation" class="cancel-button btn pull pull-right font-weight-bold" onclick="showFlights()">
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </a>
+                <form method="post" th:object="${passengers}">
+                    <div th:each="i : ${#numbers.sequence(1, searchParameters.get('passengers'))}" class="mt-3">
+                        <h6 class="font-weight-bold" th:text="'Passenger ' + ${i}" style="color: #0e67e4"></h6>
+
+                        <div class="form-row mt-2">
+                            <div class="form-group col-md-6">
+                                <label class="font-weight-bold" for="name">Name:</label>
+                                <input type="text" id="name" name="name" class="form-control" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="font-weight-bold" for="surname">Surname:</label>
+                                <input type="text" id="surname" name="surname" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label class="font-weight-bold" for="dateOfBirth">Date of Birth:</label>
+                                <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="font-weight-bold" for="gender">Gender:</label>
+                                <select id="gender" name="gender" class="form-control" required>
+                                    <option value="">-- Please Select --</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label class="font-weight-bold" for="phoneNumber">Phone Number:</label>
+                                <input type="tel" id="phoneNumber" name="phoneNumber" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form row pull pull-left">
+                        <div class="align-middle text-center d-inline-block">
+                            <input class="align-middle text-center" type="checkbox" id="hasExtraLuggage" name="hasExtraLuggage"/>
+                            <label class="align-middle text-center mb-0 font-weight-bold" for="hasExtraLuggage"><img class="mb-1 ml-2 mr-1" src="https://www.turkishairlines.com/theme/img/icons/brand_right_checked_baggage.svg">Extra Luggage</label>
+                        </div>
+                    </div>
+                    <div class="form-row justify-content-end">
+                        <input type="text" id="flightDetails" name="FlightDetails" style="display: none">
+                        <button class="align-self-end btn pay-now pull pull-right" type="submit">Pay now<i class="fa fa-angle-right ml-3" aria-hidden="true"></i></button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

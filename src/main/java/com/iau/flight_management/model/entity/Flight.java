@@ -23,11 +23,23 @@ public class Flight {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "departure")
-    private String departure;
+    @Column(name = "departure_airport")
+    private String departureAirport;
 
-    @Column(name = "destination")
-    private String destination;
+    @Column(name = "departure_airport_iata")
+    private String departureAirportIataCode;
+
+    @Column(name = "departure_city")
+    private String departureCity;
+
+    @Column(name = "arrival_airport")
+    private String arrivalAirport;
+
+    @Column(name = "arrival_airport_iata")
+    private String arrivalAirportIataCode;
+
+    @Column(name = "arrival_city")
+    private String arrivalCity;
 
     @Column(name = "departure_time")
     private Time departureTime;

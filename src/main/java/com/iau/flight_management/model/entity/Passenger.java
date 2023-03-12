@@ -35,6 +35,7 @@ public class Passenger {
 
     @Column(name = "phone_number")
     private String phoneNumber;
+
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "passengers")
     public List<Reservation> reservations;
 }

@@ -1,4 +1,4 @@
-package com.iau.flight_management.model.entity.security.config;
+package com.iau.flight_management.security.config;
 
 import com.iau.flight_management.service.MemberDetailsServiceImpl;
 import lombok.NonNull;

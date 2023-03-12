@@ -314,6 +314,7 @@
         function showTrip(tripType) {
                 if (tripType == 1) {
                     document.getElementById('return-div').style.display= 'none';
+                    document.getElementById('return-date-input').value = "";
                 } else {
                     document.getElementById('return-div').style.display= 'inline-block';
                 }
@@ -379,7 +380,7 @@
                        <div class="col-md-2" id="return-div">
                            <div class="form-group">
                                <label for="return-date-input">Return Date</label>
-                               <input type="date" name="arrival-date" class="form-control" id="return-date-input">
+                               <input type="date" name="return-date" class="form-control" id="return-date-input">
                            </div>
                        </div>
                        <div class="col-md-2">
@@ -389,9 +390,6 @@
                                    <option value="1">1 Passenger</option>
                                    <option value="2">2 Passengers</option>
                                    <option value="3">3 Passengers</option>
-                                   <option value="4">4 Passengers</option>
-                                   <option value="5">5 Passengers</option>
-                                   <option value="6">6 Passengers</option>
                                </select>
                            </div>
                        </div>

@@ -65,7 +65,7 @@ public class FlightServiceImpl implements FlightService{
         searchParameters.put("airlineIataCode", THY_IATA);
         searchParameters.put("airlineIcaoCode", THY_ICAO);
         searchParameters.put("departureDate", formData.getFirst("departure-date"));
-        searchParameters.put("arrivalDate", formData.getFirst("arrival-date"));
+        searchParameters.put("returnDate", formData.getFirst("return-date"));
         searchParameters.put("passengers", formData.getFirst("passengers"));
 
         return searchParameters;
@@ -103,6 +103,9 @@ public class FlightServiceImpl implements FlightService{
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             FlightDTO flight = objectMapper.readValue(jsonObject.toString(), FlightDTO.class);
 
+            int price = Integer.parseInt(flight.getDuration())  * 13;
+            flight.setPrice(price);
+            flight.setId((long) (i + 1));
             flight.setDuration(convertDurationToHours(Integer.parseInt(flight.getDuration())));
             flights.add(flight);
         }
