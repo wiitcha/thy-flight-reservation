@@ -54,6 +54,7 @@ public class FlightServiceImpl implements FlightService{
     public HashMap<String, String> extractSearchParameters(MultiValueMap<String, String> formData) {
         HashMap<String, String> searchParameters = new HashMap<>();
 
+        searchParameters.put("flightType", formData.getFirst("flight-type"));
         searchParameters.put("departureAirport", formData.getFirst("departure-airport"));
         searchParameters.put("departureCity", formData.getFirst("departure-airport-codes").split(",")[0]);
         searchParameters.put("departureAirportIataCode", formData.getFirst("departure-airport-codes").split(",")[1]);
