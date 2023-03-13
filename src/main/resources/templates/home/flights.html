@@ -198,6 +198,19 @@
         #return-flights {
             display: none;
         }
+
+        .final-reservation {
+            border-radius: .25rem;
+            margin-left: 100px;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .card-selection {
+            border-left: 1px solid white;
+            padding-left: 20px;
+        }
     </style>
     <script th:inline="javascript">
         /*<![CDATA[*/
@@ -232,6 +245,18 @@
                     document.getElementById(selectedFlights[1].id + flights.length).className = "pe-none";
                 }
                 document.getElementById("passengers").style.display = "block";
+
+                showDemoFlightTimes();
+            }
+        }
+
+        function showDemoFlightTimes() {
+            document.getElementById("departure-dep-time").innerText = selectedFlights[0].dep_time.split(" ")[1];
+            document.getElementById("departure-arr-time").innerText = selectedFlights[0].arr_time.split(" ")[1];
+
+            if (searchParameters.flightType === "round-trip") {
+                document.getElementById("arrival-dep-time").innerText = selectedFlights[1].dep_time.split(" ")[1];
+                document.getElementById("arrival-arr-time").innerText = selectedFlights[1].arr_time.split(" ")[1];
             }
         }
 
@@ -434,15 +459,51 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form row pull pull-left">
+                    <div class="form row pull pull-left mr-5">
                         <div class="align-middle text-center d-inline-block">
                             <input class="align-middle text-center" type="checkbox" id="hasExtraLuggage" name="hasExtraLuggage"/>
                             <label class="align-middle text-center mb-0 font-weight-bold" for="hasExtraLuggage"><img class="mb-1 ml-2 mr-1" src="https://www.turkishairlines.com/theme/img/icons/brand_right_checked_baggage.svg">Extra Luggage</label>
                         </div>
                     </div>
-                    <div class="form-row justify-content-end">
-                        <input type="text" id="flightDetails" name="FlightDetails" style="display: none">
-                        <button class="align-self-end btn pay-now pull pull-right" type="submit">Pay now<i class="fa fa-angle-right ml-5 mr-2" aria-hidden="true"></i></button>
+                    <input type="text" id="flightDetails" name="FlightDetails" style="display: none">
+                    <div class="final-reservation form-row justify-content-start p-3 ml-4" style="background-color: #282c3c">
+                        <div class="d-lg-flex flight-detail-bar">
+                            <div class="col-lg-6">
+                                <div class="h5 mt-0" style="font-size: 14px">Departure</div>
+                                <span class="float-start" th:text="${searchParameters.get('departureAirportIataCode')} + ' - ' + ${searchParameters.get('arrivalAirportIataCode')}"></span>
+                                <em class="fa fa-circle float-start px-1 mt-1" style="font-size: 7px"></em>
+                                <span class="float-start pr-2" th:text="${searchParameters.get('departureDate')}"></span>
+                                <div class="lh-20 clearfix">
+                                    <span class="float-start">Departure</span>
+                                    <span class="float-start px-1" id="departure-dep-time"></span>
+                                    <span class="float-start">|</span>
+                                    <span class="float-start px-1">Arrival</span>
+                                    <span class="float-start" id="departure-arr-time"></span>
+                                </div>
+                            </div>
+                            <div th:if="${searchParameters.get('flightType') == 'round-trip'}" class="col-lg-6">
+                                <div class="h5 mt-0" style="font-size: 14px">Return</div>
+                                <span class="float-start" th:text="${searchParameters.get('arrivalAirportIataCode')} + ' - ' + ${searchParameters.get('departureAirportIataCode')}"></span>
+                                <em class="fa fa-circle float-start px-1 mt-1" style="font-size: 7px"></em>
+                                <span class="float-start pr-2" th:text="${searchParameters.get('departureDate')}"></span>
+                                <div class="lh-20 clearfix">
+                                    <span class="float-start">Departure</span>
+                                    <span class="float-start px-1" id="arrival-dep-time"></span>
+                                    <span class="float-start">|</span>
+                                    <span class="float-start px-1">Arrival</span>
+                                    <span class="float-start" id="arrival-arr-time"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-selection col-lg-3" style="padding-left: 27px">
+                            <label for="select-card" style="font-size: 14px; color: wheat">Select a payment card</label>
+                            <select class="form-control text-center" id="select-card" style="font-size: 12px; font-weight: bold">
+                                <option th:each="card : ${cards}" th:value="${card.getNumber()}" th:text="${card.getName()} + ' - ending with ' + ${card.getNumber().substring(12)}"></option>
+                            </select>
+                        </div>
+                        <div class="col-lg-3 ml-2">
+                            <button class="align-self-end btn pay-now pull pull-right" style="font-weight: bold" type="submit">Pay now<i class="fa fa-angle-right ml-5 mr-2 font-weight-bold" aria-hidden="true"></i></button>
+                        </div>
                     </div>
                 </form>
             </div>

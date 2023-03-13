@@ -1,6 +1,11 @@
 package com.iau.flight_management.controller;
 
+import com.iau.flight_management.model.entity.Card;
+import com.iau.flight_management.model.entity.Member;
+import com.iau.flight_management.security.config.JwtService;
+import com.iau.flight_management.service.CardService;
 import com.iau.flight_management.service.FlightService;
+import com.iau.flight_management.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 
@@ -11,31 +16,49 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
 
 @RequiredArgsConstructor
+@SessionAttributes("Authorization")
 @Controller
 @RequestMapping("/flights")
 public class FlightController {
 
     private final FlightService flightService;
+    private final JwtService jwtService;
+    private final MemberService memberService;
+    private final CardService cardService;
+    private static final String SECURITY_LOGOUT = "redirect:/home?logout";
+
 
     @PostMapping
     public String searchFlights(Model model,
+                                @ModelAttribute("Authorization") String token,
                                 @RequestBody MultiValueMap<String, String> formData,
                                 HttpServletRequest request) throws IOException, InterruptedException {
 
-        HashMap<String, String> searchParameters= flightService.extractSearchParameters(formData);
+        String email = jwtService.extractUsername(token);
 
-        model.addAttribute("flights", flightService.getSearchedFlights(searchParameters));
-        model.addAttribute("searchParameters", searchParameters);
+        if (memberService.existsByEmail(email)) {
+            Member member = memberService.findByEmail(email).get();
 
-        request.getSession().setAttribute("Flight_Details", searchParameters);
+            List<Card> cards = cardService.findAllCardsOfMember(member);
+            model.addAttribute("cards", cards);
 
+            HashMap<String, String> searchParameters= flightService.extractSearchParameters(formData);
+            model.addAttribute("flights", flightService.getSearchedFlights(searchParameters));
+
+            model.addAttribute("searchParameters", searchParameters);
+
+            request.getSession().setAttribute("Flight_Details", searchParameters);
+
+            return "home/flights";
+        } else {
+            return SECURITY_LOGOUT;
+        }
 
         //model.addAttribute("flightSearchAPIToken", flightService.generateFlightSearchAPIToken(searchParameters));
-
-        return "home/flights";
     }
 
 
