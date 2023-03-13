@@ -225,9 +225,6 @@
             selectedFlights.push(flights.at(flightId - 1));
 
             if (searchParameters.returnDate.toString().length !== 0 && selectedFlights.length !== 2) {
-                document.getElementById("inbound").className = "";
-                document.getElementById("outbound").className = "d-none";
-
                 showFlights();
             } else {
                 document.getElementById("inbound").className = "d-none";
@@ -247,6 +244,7 @@
                 document.getElementById("passengers").style.display = "block";
 
                 showDemoFlightTimes();
+                showTotal();
             }
         }
 
@@ -258,6 +256,22 @@
                 document.getElementById("arrival-dep-time").innerText = selectedFlights[1].dep_time.split(" ")[1];
                 document.getElementById("arrival-arr-time").innerText = selectedFlights[1].arr_time.split(" ")[1];
             }
+        }
+
+        function showTotal() {
+            let total = 0;
+
+            for (let i = 0; i < selectedFlights.length; i++) {
+                total += selectedFlights[i].price;
+            }
+            total += total * 0.18; // 18% KDV
+
+            const formattedTotal = total.toLocaleString('tr-TR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            });
+
+            document.getElementById("total").innerText = formattedTotal;
         }
 
         function showFlights() {
@@ -280,7 +294,7 @@
                     document.getElementById("outbound").className = "";
                     document.getElementById("payment-page").className = "d-none";
                 }
-                hideReturnFlights();
+                hideDepartureFlights()
             }
 
             document.getElementById("passengers").style.display = "none";
@@ -292,6 +306,15 @@
                 tableBody.children.item(i).className = "d-none";
             }
         }
+
+        function hideDepartureFlights() {
+            const tableBody = document.getElementById("table-body")
+            for (let i = 0; i < flights.length; i++) {
+                tableBody.children.item(i).className = "d-none";
+            }
+        }
+
+
     </script>
 </head>
 <body onload="hideReturnFlights()">
@@ -311,7 +334,7 @@
 
 <div class="container">
     <div class="centered-content mt-5">
-        <div class="shadow p-3 mb-5 bg-light rounded" style="width: 1200px; height: auto; overflow: auto;">
+        <div class="shadow p-3 mb-5 bg-light rounded" style="width: 1600px; height: auto; overflow: auto;">
             <div id="inbound" class="d-none">
                 <h3>INBOUND FLIGHT<i class="fa fa-undo ml-4" aria-hidden="true"></i></h3>
                 <h2 th:text="${searchParameters.get('arrivalCity')} + ' to ' + ${searchParameters.get('departureCity')} + ' | ' + ${searchParameters.get('returnDate')}"></h2>
@@ -441,7 +464,7 @@
                                 <label class="font-weight-bold" for="dateOfBirth">Date of Birth:</label>
                                 <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control" required>
                             </div>
-                            <div class="form-group col-md-6">
+                            <div class=" form-group col-md-6">
                                 <label class="font-weight-bold" for="gender">Gender:</label>
                                 <select id="gender" name="gender" class="form-control" required>
                                     <option value=""></option>
@@ -466,9 +489,10 @@
                         </div>
                     </div>
                     <input type="text" id="flightDetails" name="FlightDetails" style="display: none">
-                    <div class="final-reservation form-row justify-content-start p-3 ml-4" style="background-color: #282c3c">
-                        <div class="d-lg-flex flight-detail-bar">
-                            <div class="col-lg-6">
+                    <div th:class="${searchParameters.get('flightType') == 'round-trip'} ? 'final-reservation form-row justify-content-start p-3 ml-4'
+                        : 'final-reservation form-row justify-content-end p-3 ml-4'" style="background-color: #282c3c">
+                        <div class="d-lg-flex flight-detail-bar mr-xl-auto">
+                            <div th:class="${searchParameters.get('flightType') == 'round-trip'}  ? 'col-lg-6': 'col-lg-12'">
                                 <div class="h5 mt-0" style="font-size: 14px">Departure</div>
                                 <span class="float-start" th:text="${searchParameters.get('departureAirportIataCode')} + ' - ' + ${searchParameters.get('arrivalAirportIataCode')}"></span>
                                 <em class="fa fa-circle float-start px-1 mt-1" style="font-size: 7px"></em>
@@ -482,10 +506,10 @@
                                 </div>
                             </div>
                             <div th:if="${searchParameters.get('flightType') == 'round-trip'}" class="col-lg-6">
-                                <div class="h5 mt-0" style="font-size: 14px">Return</div>
+                                <div class="h5 mt-0" style="font-size: 14px">Arrival</div>
                                 <span class="float-start" th:text="${searchParameters.get('arrivalAirportIataCode')} + ' - ' + ${searchParameters.get('departureAirportIataCode')}"></span>
                                 <em class="fa fa-circle float-start px-1 mt-1" style="font-size: 7px"></em>
-                                <span class="float-start pr-2" th:text="${searchParameters.get('departureDate')}"></span>
+                                <span class="float-start pr-2" th:text="${searchParameters.get('returnDate')}"></span>
                                 <div class="lh-20 clearfix">
                                     <span class="float-start">Departure</span>
                                     <span class="float-start px-1" id="arrival-dep-time"></span>
@@ -501,7 +525,19 @@
                                 <option th:each="card : ${cards}" th:value="${card.getNumber()}" th:text="${card.getName()} + ' - ending with ' + ${card.getNumber().substring(12)}"></option>
                             </select>
                         </div>
-                        <div class="col-lg-3 ml-2">
+                        <div th:class="${searchParameters.get('flightType') == 'one-way'} ? 'pe-15 pe-0-web ws-nowrap ml-5 mt-2' : 'pe-15 pe-0-web ws-nowrap ml-2 mt-2'">
+                            <div class="price-count mt-15">
+                                <div class="lh-3" style="font-size: 12px">Total price for 1 passenger</div>
+                                <span class="fs-4 pl-2" id="total"></span>
+                                <div class="pull pull-left fs-20-mbl fs-22">
+                                    <span class=" pull pull-left dib lh-12 lh-10-mbl rtl-float-end">
+                                        <span class="d-block fs-10-mbl fs-12 text-end">TRY</span>
+                                        <span class="d-block fs-10-mbl fs-12">Turkish lira</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 ml-2">
                             <button class="align-self-end btn pay-now pull pull-right" style="font-weight: bold" type="submit">Pay now<i class="fa fa-angle-right ml-5 mr-2 font-weight-bold" aria-hidden="true"></i></button>
                         </div>
                     </div>
