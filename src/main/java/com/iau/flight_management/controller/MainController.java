@@ -29,7 +29,7 @@ public class MainController {
     @GetMapping
     public String home(Model model) throws IOException, InterruptedException {
 
-        model.addAttribute("airports", flightService.getAirports());
+       // model.addAttribute("airports", flightService.getAirports());
 
 
         return "home/main";

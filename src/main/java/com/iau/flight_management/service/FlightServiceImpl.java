@@ -27,10 +27,10 @@ public class FlightServiceImpl implements FlightService{
     private final static String THY_ICAO = "THY";
 
 
-    @Override
+   /* @Override
     public List<Airport> getAirports() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://airlabs.co/api/v9/airports?_fields=name,iata_code,icao_code&api_key=fe63f32c-47c5-466e-8e16-0a14a30d6f75"))
+                .uri(URI.create("https://airlabs.co/api/v9/airports?_fields=name,iata_code,icao_code&api_key=c7e5b46c-cab6-4b7c-985e-eef74ed6caf4"))
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 
@@ -48,7 +48,7 @@ public class FlightServiceImpl implements FlightService{
             airports.add(airport);
         }
         return airports;
-    }
+    }*/
 
     @Override
     public HashMap<String, String> extractSearchParameters(MultiValueMap<String, String> formData) {
@@ -75,7 +75,7 @@ public class FlightServiceImpl implements FlightService{
     @Override
     public String generateFlightSearchAPIToken(HashMap<String, String> parameters) {
         return String.format(
-                "https://airlabs.co/api/v9/schedules?dep_iata=%s&dep_icao=%s&arr_iata=%s&arr_icao=%s&airline_icao=%s&airline_iata=%s&api_key=fe63f32c-47c5-466e-8e16-0a14a30d6f75" +
+                "https://airlabs.co/api/v9/schedules?dep_iata=%s&dep_icao=%s&arr_iata=%s&arr_icao=%s&airline_icao=%s&airline_iata=%s&api_key=c7e5b46c-cab6-4b7c-985e-eef74ed6caf4" +
                         "&_fields=flight_iata,dep_iata,dep_time,arr_iata,arr_time,status,duration,aircraft_icao",
                 parameters.get("departureAirportIataCode"),
                 parameters.get("departureAirportIcaoCode"),

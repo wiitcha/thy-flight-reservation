@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface FlightService {
 
-    List<Airport> getAirports() throws IOException, InterruptedException;
+    //List<Airport> getAirports() throws IOException, InterruptedException;
     HashMap<String, String> extractSearchParameters(MultiValueMap<String, String> formData);
     String generateFlightSearchAPIToken(HashMap<String, String> parameters);
     List<FlightDTO> getSearchedFlights(HashMap<String, String> parameters) throws IOException, InterruptedException;

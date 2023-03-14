@@ -10,6 +10,7 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css" integrity="sha512-Q7oUJlu9XR9xVslbzeKMiS7R//bgLZfR5j5P5ZcBy20H5bXnq3iVjKTrj+c1mvQKut0c3LUvI0bnylL8FPKtDg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,100;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
@@ -17,6 +18,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.bundle.min.js"
+            integrity="sha512-WJ61u4qiQFV2ymezFXoJU6oehu9XddOoyrGQrItTsaLjTwH2ivATljjgNUU0X6Uij1CbyGncK57zsB0wAs/XJw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
@@ -210,6 +213,24 @@
         .card-selection {
             border-left: 1px solid white;
             padding-left: 20px;
+        }
+
+        .add-card-btn {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 26px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+            text-decoration: none;
+        }
+
+        .add-card-btn:hover {
+            background-color: #0062cc;
+            text-decoration: none;
+            color: #fff;
         }
     </style>
     <script th:inline="javascript">
@@ -506,7 +527,7 @@
                                 </div>
                             </div>
                             <div th:if="${searchParameters.get('flightType') == 'round-trip'}" class="col-lg-6">
-                                <div class="h5 mt-0" style="font-size: 14px">Arrival</div>
+                                <div class="h5 mt-0" style="font-size: 14px">Return</div>
                                 <span class="float-start" th:text="${searchParameters.get('arrivalAirportIataCode')} + ' - ' + ${searchParameters.get('departureAirportIataCode')}"></span>
                                 <em class="fa fa-circle float-start px-1 mt-1" style="font-size: 7px"></em>
                                 <span class="float-start pr-2" th:text="${searchParameters.get('returnDate')}"></span>
@@ -521,7 +542,12 @@
                         </div>
                         <div class="card-selection col-lg-3" style="padding-left: 27px">
                             <label for="select-card" style="font-size: 14px; color: wheat">Select a payment card</label>
-                            <select class="form-control text-center" id="select-card" style="font-size: 12px; font-weight: bold">
+                            <th:block th:if="${cards.isEmpty()}">
+                                <div class="text-center">
+                                    <a th:href="@{/home/cards}" class="add-card-btn mt-2 mr-xl-4">Add a payment card</a>
+                                </div>
+                            </th:block>
+                            <select th:if="${cards.size() > 0}" class="form-control text-center" id="select-card" style="font-size: 12px; font-weight: bold">
                                 <option th:each="card : ${cards}" th:value="${card.getNumber()}" th:text="${card.getName()} + ' - ending with ' + ${card.getNumber().substring(12)}"></option>
                             </select>
                         </div>
@@ -538,7 +564,7 @@
                             </div>
                         </div>
                         <div class="col-lg-2 ml-2">
-                            <button class="align-self-end btn pay-now pull pull-right" style="font-weight: bold" type="submit">Pay now<i class="fa fa-angle-right ml-5 mr-2 font-weight-bold" aria-hidden="true"></i></button>
+                            <button th:disabled="${cards.isEmpty()}" class="align-self-end btn pay-now pull pull-right" style="font-weight: bold" type="submit">Pay now<i class="fa fa-angle-right ml-5 mr-2 font-weight-bold" aria-hidden="true"></i></button>
                         </div>
                     </div>
                 </form>

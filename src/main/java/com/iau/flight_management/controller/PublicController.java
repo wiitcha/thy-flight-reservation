@@ -28,7 +28,7 @@ public class PublicController {
     @GetMapping("/register")
     public String viewRegisterPage(Model model) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://airlabs.co/api/v9/countries?api_key=fe63f32c-47c5-466e-8e16-0a14a30d6f75"))
+                .uri(URI.create("https://airlabs.co/api/v9/countries?api_key=c7e5b46c-cab6-4b7c-985e-eef74ed6caf4"))
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
 

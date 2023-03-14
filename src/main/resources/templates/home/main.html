@@ -243,16 +243,32 @@
             cursor: pointer;
         }
 
+        #greetings {
+            margin-top: 175px;
+            margin-right: 450px;
+        }
+
     </style>
     <script th:inline="javascript">
         let airports = [];
+        const airportDepartureDiv = document.getElementById("departure");
+        const airportArrivalDiv = document.getElementById("arrival");
+        const airportFromFilter = document.getElementById("arrival-airport-filtered-list");
+        const airportToFilter = document.getElementById("departure-airport-filtered-list");
+        // const departureInput = document.getElementById('departure-date-input');
+        // const returnInput = document.getElementById('return-date-input');
+
+        function handleDateChange() {
+            const departureDate = new Date(document.getElementById("departure-date-input").value);
+            const returnDate = new Date(document.getElementById("return-date-input").value);
+
+            if (returnDate < departureDate) {
+                document.getElementById("departure-date-input").value = returnDate.toISOString().slice(0, 10);
+                document.getElementById("return-date-input").value = departureDate.toISOString().slice(0, 10);
+            }
+        }
 
         document.addEventListener("click", function(event) {
-            const airportDepartureDiv = document.getElementById("departure");
-            const airportArrivalDiv = document.getElementById("arrival");
-            const airportFromFilter = document.getElementById("arrival-airport-filtered-list");
-            const airportToFilter = document.getElementById("departure-airport-filtered-list");
-
             let isClickInsideDepartureDiv = airportDepartureDiv.contains(event.target);
             let isClickInsideArrivalDiv = airportArrivalDiv.contains(event.target);
 
@@ -263,7 +279,7 @@
         });
 
         function getAirports() {
-            let airportsUrl = 'https://airlabs.co/api/v9/airports?_fields=name,city,iata_code,icao_code&api_key=fe63f32c-47c5-466e-8e16-0a14a30d6f75';
+            let airportsUrl = 'https://airlabs.co/api/v9/airports?_fields=name,city,iata_code,icao_code&api_key=c7e5b46c-cab6-4b7c-985e-eef74ed6caf4';
             fetch(airportsUrl)
                 .then((response) => response.json())
                 .then((data) => {
@@ -272,9 +288,8 @@
         }
 
         function filterAirports(inputFieldId, airportFilterId, airportCodesId) {
-            const airportInput = document.getElementById(inputFieldId);
-            const airportSelect = document.getElementById(airportFilterId);
-            const airportCodes = document.getElementById(airportCodesId);
+            let airportInput = document.getElementById(inputFieldId);
+            let airportSelect = document.getElementById(airportFilterId);
             airportSelect.innerHTML = '';
 
             const filterText = airportInput.value;
@@ -307,7 +322,6 @@
         function updateValue(inputFieldId, value, airportFilterId, airportTitle, airportCodesId) {
             document.getElementById(inputFieldId).value = value;
             document.getElementById(airportCodesId).value = airportTitle;
-            //document.getElementById(inputFieldId).title = airportTitle;
             document.getElementById(airportFilterId).style.display = 'none';
         }
 
@@ -336,7 +350,16 @@
     </div>
 </nav>
 
+<div tabindex="-1"
+      style="background-image: url(https://cdn.turkishairlines.com/m/6761929144cccc1e/original/anasayfa-1400.webp);
+      height: 50vh;background-size: cover; position: absolute;width: 100%; z-index: -1">
+</div>
+
 <div class="container">
+    <div id="greetings" class="align-self-start text-light position-absolute">
+        <div class="h2 fs-3 mb-0 mt-10">HELLO</div>
+        <div class="h1 mb-100 mt-0">Where do you want to explore?</div>
+    </div>
        <div class="search-box">
            <form method="post" th:action="@{/flights}">
                <div class="row">
@@ -374,13 +397,15 @@
                        <div class="col-md-2">
                            <div class="form-group">
                                <label for="departure-date-input">Departure Date</label>
-                               <input type="date" name="departure-date" class="form-control" id="departure-date-input">
+                               <input type="date" name="departure-date" class="form-control" id="departure-date-input"
+                                      onchange="handleDateChange()" th:attr="min=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
                            </div>
                        </div>
                        <div class="col-md-2" id="return-div">
                            <div class="form-group">
                                <label for="return-date-input">Return Date</label>
-                               <input type="date" name="return-date" class="form-control" id="return-date-input">
+                               <input type="date" name="return-date" class="form-control" id="return-date-input"
+                                      onchange="handleDateChange()" th:attr="min=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
                            </div>
                        </div>
                        <div class="col-md-2">
@@ -402,8 +427,7 @@
                    </div>
                </div>
            </form>
-        </div>
-    </div>
+       </div>
 </div>
 
 </body>
