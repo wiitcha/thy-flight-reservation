@@ -255,7 +255,8 @@
 <span th:if="${hasAnyCard} and ${param.edit == null} and !${param.new}">
     <div class="cards-container">
         <div th:each="card : ${cards}" class="card">
-            <a class="delete-button" th:href="@{/home/cards/delete(id=${card.getId()})}">
+            <a class="delete-button" th:href="@{/home/cards/delete(id=${card.getId()})}"
+               onclick="return confirm([[${'Are you sure you want to delete the ' + card.name + ' card?' }]]);">
                 <i class="fa fa-times" title="Remove card" aria-hidden="true"></i>
             </a>
             <img src="https://static.vecteezy.com/system/resources/thumbnails/003/065/309/small_2x/credit-card-icon-flat-concept-illustration-free-vector.jpg" alt="Card Image">

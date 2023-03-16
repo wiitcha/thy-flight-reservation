@@ -163,7 +163,7 @@
         .search-box {
             background-color: #fff;
             padding: 40px;
-            border-radius: 8px;
+            border-radius: 4px;
             /*box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);*/
             box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
             max-width: 1000px;
@@ -251,12 +251,6 @@
     </style>
     <script th:inline="javascript">
         let airports = [];
-        const airportDepartureDiv = document.getElementById("departure");
-        const airportArrivalDiv = document.getElementById("arrival");
-        const airportFromFilter = document.getElementById("arrival-airport-filtered-list");
-        const airportToFilter = document.getElementById("departure-airport-filtered-list");
-        // const departureInput = document.getElementById('departure-date-input');
-        // const returnInput = document.getElementById('return-date-input');
 
         function handleDateChange() {
             const departureDate = new Date(document.getElementById("departure-date-input").value);
@@ -269,6 +263,11 @@
         }
 
         document.addEventListener("click", function(event) {
+            const airportDepartureDiv = document.getElementById("departure");
+            const airportArrivalDiv = document.getElementById("arrival");
+            const airportFromFilter = document.getElementById("arrival-airport-filtered-list");
+            const airportToFilter = document.getElementById("departure-airport-filtered-list");
+
             let isClickInsideDepartureDiv = airportDepartureDiv.contains(event.target);
             let isClickInsideArrivalDiv = airportArrivalDiv.contains(event.target);
 

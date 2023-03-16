@@ -245,9 +245,15 @@
         function proceedReservation(flightId) {
             selectedFlights.push(flights.at(flightId - 1));
 
+
+
             if (searchParameters.returnDate.toString().length !== 0 && selectedFlights.length !== 2) {
+                document.getElementById("inbound").className = "";
+                document.getElementById("outbound").className = "d-none";
                 showFlights();
             } else {
+
+
                 document.getElementById("inbound").className = "d-none";
                 document.getElementById("outbound").className = "d-none";
                 document.getElementById("payment-page").className = "";
@@ -264,9 +270,32 @@
                 }
                 document.getElementById("passengers").style.display = "block";
 
+
+
+                console.log(flightDetails);
+
                 showDemoFlightTimes();
                 showTotal();
             }
+        }
+
+        function setSelectedFlightDetailsToHiddenInput() {
+            let flightDetails = "";
+
+            selectedFlights.forEach(flight => {
+                let details = Object.values(flight)
+
+                for (let i = 0; i < details.length; i++) {
+                    if (details[i] != null) {
+                        flightDetails += details[i] + ",";
+                    }
+                }
+
+                flightDetails += "/";
+            });
+
+            document.getElementById()
+
         }
 
         function showDemoFlightTimes() {
