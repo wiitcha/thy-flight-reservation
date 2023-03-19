@@ -1,14 +1,13 @@
 package com.iau.flight_management.model.dto;
 
 import com.iau.flight_management.model.entity.Reservation;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class PassengerDTO {
@@ -16,8 +15,11 @@ public class PassengerDTO {
     private Long id;
     private String[] name;
     private String[] surname;
-    private Date[] dateOfBirth;
+    private String[] dateOfBirth;
     private String[] gender;
     private String[] phoneNumber;
+    private String flightDetails;
+    private String cardId;
+    private boolean hasExtraLuggage;
     public List<Reservation> reservations;
 }

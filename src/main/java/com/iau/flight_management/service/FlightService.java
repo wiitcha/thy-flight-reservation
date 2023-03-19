@@ -2,6 +2,8 @@ package com.iau.flight_management.service;
 
 import com.iau.flight_management.model.dto.Airport;
 import com.iau.flight_management.model.dto.FlightDTO;
+import com.iau.flight_management.model.dto.PassengerDTO;
+import com.iau.flight_management.model.entity.Flight;
 import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
@@ -15,4 +17,5 @@ public interface FlightService {
     String generateFlightSearchAPIToken(HashMap<String, String> parameters);
     List<FlightDTO> getSearchedFlights(HashMap<String, String> parameters) throws IOException, InterruptedException;
     String convertDurationToHours(int duration);
+    List<Flight> bookFlights(HashMap<String, String> searchParameters, PassengerDTO passengersAndFlightDetails);
 }

@@ -1,8 +1,10 @@
 package com.iau.flight_management.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.iau.flight_management.model.dto.Airport;
 import com.iau.flight_management.model.dto.FlightDTO;
+import com.iau.flight_management.model.dto.PassengerDTO;
+import com.iau.flight_management.model.entity.Flight;
+import com.iau.flight_management.repository.FlightRepository;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,9 +16,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -25,30 +24,7 @@ public class FlightServiceImpl implements FlightService{
 
     private final static String THY_IATA = "TK";
     private final static String THY_ICAO = "THY";
-
-
-   /* @Override
-    public List<Airport> getAirports() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://airlabs.co/api/v9/airports?_fields=name,iata_code,icao_code&api_key=c7e5b46c-cab6-4b7c-985e-eef74ed6caf4"))
-                .method("GET", HttpRequest.BodyPublishers.noBody())
-                .build();
-
-        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JSONObject json = new JSONObject(response.body());
-        JSONArray jsonArray = json.getJSONArray("response");
-
-        List<Airport> airports = new ArrayList<>();
-
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
-            Airport airport = objectMapper.readValue(jsonObject.toString(), Airport.class); //The toString method is called on each JSONObject to convert it to a JSON string that can be parsed by the readValue method.
-            airports.add(airport);
-        }
-        return airports;
-    }*/
+    private final FlightRepository flightRepository;
 
     @Override
     public HashMap<String, String> extractSearchParameters(MultiValueMap<String, String> formData) {
@@ -118,6 +94,40 @@ public class FlightServiceImpl implements FlightService{
         int hours = duration / 60;
         int minutes = (duration - (hours * 60)) / 5;
         return String.format("%sh %sm", hours, minutes*5);
+    }
+
+    @Override
+    public List<Flight> bookFlights(HashMap<String, String> searchParameters, PassengerDTO passengersAndFlightDetails) {
+
+        String[] flights = passengersAndFlightDetails.getFlightDetails().split("/");
+
+        List<Flight> flightList = new ArrayList<>();
+
+        for (int i = 0; i < flights.length; i++) {
+            Flight flight = prepareFlightInformation(searchParameters, flights, i);
+
+            flightRepository.save(flight);
+            flightList.add(flight);
+        }
+        return flightList;
+    }
+
+    static Flight prepareFlightInformation(HashMap<String, String> searchParameters, String[] flights, int i) {
+        String[] flightDetails = flights[i].split(",");
+
+        return Flight.builder()
+                .flightIataCode(flightDetails[0])
+                .departureAirport(searchParameters.get("departureAirport"))
+                .departureAirportIataCode(searchParameters.get("departureAirportIataCode"))
+                .departureCity(searchParameters.get("departureCity"))
+                .departureTime(flightDetails[1].split(" ")[1])
+                .arrivalAirport(searchParameters.get("arrivalAirport"))
+                .arrivalAirportIataCode(searchParameters.get("arrivalAirportIataCode"))
+                .arrivalCity(searchParameters.get("arrivalCity"))
+                .arrivalTime(flightDetails[2].split(" ")[1])
+                .price(Double.parseDouble(flightDetails[flightDetails.length - 1]))
+                .date(flightDetails[1].split(" ")[0])
+                .build();
     }
 
 

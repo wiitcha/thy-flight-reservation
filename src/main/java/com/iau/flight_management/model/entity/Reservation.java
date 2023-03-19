@@ -3,6 +3,7 @@ package com.iau.flight_management.model.entity;
 import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -21,15 +23,9 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "status")
-    private String status;
-
     @Column(name = "date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
-
-    @Column(name = "isFlexible")
-    private boolean isFlexible;
 
     @Column(name = "hasExtraLuggage")
     private boolean hasExtraLuggage;

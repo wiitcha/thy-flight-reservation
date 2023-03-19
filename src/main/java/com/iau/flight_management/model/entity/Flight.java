@@ -42,14 +42,19 @@ public class Flight {
     private String arrivalCity;
 
     @Column(name = "departure_time")
-    private Time departureTime;
+    private String departureTime;
 
     @Column(name = "arrival_time")
-    private Time arrivalTime;
+    private String arrivalTime;
 
     @Column(name = "date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
+    private String date;
+
+    @Column(name = "flight_iata_code")
+    private String flightIataCode;
+
+    @Column(name = "price")
+    private double price;
 
     @ManyToMany(mappedBy = "flights", fetch = FetchType.LAZY)
     private List<Reservation> reservations;

@@ -18,6 +18,7 @@ import java.util.List;
 public class Passenger {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_number")
     private Long id;
 
@@ -28,7 +29,7 @@ public class Passenger {
     private String surname;
 
     @Column(name = "date_of_birth")
-    private Date dateOfBirth;
+    private String dateOfBirth;
 
     @Column(name = "gender")
     private String gender;

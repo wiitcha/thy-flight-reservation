@@ -1,22 +1,28 @@
 package com.iau.flight_management.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.iau.flight_management.model.dto.PassengerDTO;
 import com.iau.flight_management.model.entity.Card;
 import com.iau.flight_management.model.entity.Member;
 import com.iau.flight_management.security.config.JwtService;
 import com.iau.flight_management.service.CardService;
 import com.iau.flight_management.service.FlightService;
 import com.iau.flight_management.service.MemberService;
+import com.iau.flight_management.service.ReservationService;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @RequiredArgsConstructor
@@ -29,6 +35,8 @@ public class FlightController {
     private final JwtService jwtService;
     private final MemberService memberService;
     private final CardService cardService;
+
+    private final ReservationService reservationService;
     private static final String SECURITY_LOGOUT = "redirect:/home?logout";
 
 
@@ -51,7 +59,7 @@ public class FlightController {
 
             model.addAttribute("searchParameters", searchParameters);
 
-            request.getSession().setAttribute("Flight_Details", searchParameters);
+            //request.getSession().setAttribute("Flight_Details", searchParameters);
 
             return "home/flights";
         } else {
@@ -61,6 +69,19 @@ public class FlightController {
         //model.addAttribute("flightSearchAPIToken", flightService.generateFlightSearchAPIToken(searchParameters));
     }
 
+    @PostMapping ("/booking")
+    public String bookReservation(@ModelAttribute PassengerDTO passengerDTO,
+                                  @RequestParam("myMap") String searchParams,
+                                  @ModelAttribute("Authorization") String token
+                                  ) throws JsonProcessingException {
 
+        String email = jwtService.extractUsername(token);
 
+        if (memberService.existsByEmail(email)) {
+            Member member = memberService.findByEmail(email).get();
+
+            return reservationService.bookReservation(member, searchParams, passengerDTO);
+        }
+        return SECURITY_LOGOUT;
+    }
 }

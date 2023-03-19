@@ -83,6 +83,11 @@ public class CardServiceImpl implements CardService{
     }
 
     @Override
+    public Card findCardById(Long id) {
+        return cardRepository.findById(id).get();
+    }
+
+    @Override
     public boolean checkDuplicateCards(CardDTO cardDTO, Member member) {
         List<Card> cards = cardRepository.findAllByMemberIs(member);
 
