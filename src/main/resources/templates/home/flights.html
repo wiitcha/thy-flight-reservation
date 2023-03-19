@@ -243,49 +243,26 @@
             event.preventDefault();
 
             const form = document.querySelector('#reservationForm');
-
-// Create a new FormData object and populate it with the form data
             const formData = new FormData(form);
-
             const myMap = new Map(Object.entries(searchParameters));
 
             formData.set('myMap', JSON.stringify(Object.fromEntries(myMap.entries())));
 
-// Send the form data to the server using fetch
             fetch('/flights/booking', {
                 method: 'POST',
                 body: formData
             })
                 .then(response => {
-                    // Handle the response from the server
+                    if (!response.ok) {
+                        throw new Error('Something went wrong with the reservation');
+                    } else {
+                        window.location.replace('/home/flights?success');
+                    }
+
                 })
                 .catch(error => {
-                    // Handle any errors that occur during the request
+                    console.error('Error:', error);
                 });
-
-           /* const formDataObj = {};
-
-            for (let pair of formData.entries()) {
-                formDataObj[pair[0]] = pair[1];
-            }
-
-            formDataObj.searchParams = JSON.stringify(searchParameters);
-
-            // Code to send the request using fetch
-            fetch('/flights/booking', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body:  JSON.stringify(formDataObj)
-            })
-                .then(response => {
-                    // Handle the response
-                })
-                .catch(error => {
-                    // Handle the error
-                });
-*/
         }
 
         function proceedReservation(flightId) {
@@ -296,8 +273,6 @@
                 document.getElementById("outbound").className = "d-none";
                 showFlights();
             } else {
-
-
                 document.getElementById("inbound").className = "d-none";
                 document.getElementById("outbound").className = "d-none";
                 document.getElementById("payment-page").className = "";
@@ -314,7 +289,6 @@
                 }
                 document.getElementById("passengers").style.display = "block";
 
-
                 setSelectedFlightDetailsToHiddenInput()
                 showDemoFlightTimes();
                 showTotal();
@@ -327,9 +301,7 @@
             for (let i = 0; i < selectedFlights.length; i++) {
                 flightDetails += selectedFlights[i].flight_iata + "," + selectedFlights[i].dep_time +
                     "," + selectedFlights[i].arr_time + "," + selectedFlights[i].duration + "," + selectedFlights[i].price + "/";
-
             }
-
             document.getElementById("flightDetails").value = flightDetails;
         }
 
@@ -398,8 +370,6 @@
                 tableBody.children.item(i).className = "d-none";
             }
         }
-
-
     </script>
 </head>
 <body onload="hideReturnFlights()">
@@ -553,9 +523,9 @@
                                 <label class="font-weight-bold" for="gender">Gender:</label>
                                 <select id="gender" name="gender" class="form-control" required>
                                     <option value=""></option>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="other">Other</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
                                 </select>
                             </div>
                         </div>
@@ -636,8 +606,5 @@
         </div>
     </div>
 </div>
-
-
-
 </body>
 </html>

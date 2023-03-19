@@ -16,7 +16,6 @@ import java.util.*;
 public class ReservationServiceImpl implements ReservationService{
 
     private final ReservationRepository reservationRepository;
-    private final CardService cardService;
     private final PaymentService paymentService;
     private final PassengerService passengerService;
     private final FlightService flightService;
@@ -41,7 +40,7 @@ public class ReservationServiceImpl implements ReservationService{
 
         reservationRepository.save(reservation);
 
-        return "home";
+        return "redirect:/home/flights?success";
     }
 
     @Override

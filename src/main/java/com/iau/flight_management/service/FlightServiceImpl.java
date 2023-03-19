@@ -115,19 +115,35 @@ public class FlightServiceImpl implements FlightService{
     static Flight prepareFlightInformation(HashMap<String, String> searchParameters, String[] flights, int i) {
         String[] flightDetails = flights[i].split(",");
 
-        return Flight.builder()
-                .flightIataCode(flightDetails[0])
-                .departureAirport(searchParameters.get("departureAirport"))
-                .departureAirportIataCode(searchParameters.get("departureAirportIataCode"))
-                .departureCity(searchParameters.get("departureCity"))
-                .departureTime(flightDetails[1].split(" ")[1])
-                .arrivalAirport(searchParameters.get("arrivalAirport"))
-                .arrivalAirportIataCode(searchParameters.get("arrivalAirportIataCode"))
-                .arrivalCity(searchParameters.get("arrivalCity"))
-                .arrivalTime(flightDetails[2].split(" ")[1])
-                .price(Double.parseDouble(flightDetails[flightDetails.length - 1]))
-                .date(flightDetails[1].split(" ")[0])
-                .build();
+        if (i == 0) {
+            return Flight.builder()
+                    .flightIataCode(flightDetails[0])
+                    .departureAirport(searchParameters.get("departureAirport"))
+                    .departureAirportIataCode(searchParameters.get("departureAirportIataCode"))
+                    .departureCity(searchParameters.get("departureCity"))
+                    .departureTime(flightDetails[1].split(" ")[1])
+                    .arrivalAirport(searchParameters.get("arrivalAirport"))
+                    .arrivalAirportIataCode(searchParameters.get("arrivalAirportIataCode"))
+                    .arrivalCity(searchParameters.get("arrivalCity"))
+                    .arrivalTime(flightDetails[2].split(" ")[1])
+                    .price(Double.parseDouble(flightDetails[flightDetails.length - 1]))
+                    .date(flightDetails[1].split(" ")[0])
+                    .build();
+        } else {
+            return Flight.builder()
+                    .flightIataCode(flightDetails[0])
+                    .departureAirport(searchParameters.get("arrivalAirport"))
+                    .departureAirportIataCode(searchParameters.get("arrivalAirportIataCode"))
+                    .departureCity(searchParameters.get("arrivalCity"))
+                    .departureTime(flightDetails[1].split(" ")[1])
+                    .arrivalAirport(searchParameters.get("departureAirport"))
+                    .arrivalAirportIataCode(searchParameters.get("departureAirportIataCode"))
+                    .arrivalCity(searchParameters.get("departureCity"))
+                    .arrivalTime(flightDetails[2].split(" ")[1])
+                    .price(Double.parseDouble(flightDetails[flightDetails.length - 1]))
+                    .date(flightDetails[1].split(" ")[0])
+                    .build();
+        }
     }
 
 

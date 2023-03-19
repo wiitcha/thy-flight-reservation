@@ -59,14 +59,10 @@ public class FlightController {
 
             model.addAttribute("searchParameters", searchParameters);
 
-            //request.getSession().setAttribute("Flight_Details", searchParameters);
-
             return "home/flights";
         } else {
             return SECURITY_LOGOUT;
         }
-
-        //model.addAttribute("flightSearchAPIToken", flightService.generateFlightSearchAPIToken(searchParameters));
     }
 
     @PostMapping ("/booking")

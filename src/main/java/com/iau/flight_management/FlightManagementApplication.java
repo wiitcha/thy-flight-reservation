@@ -33,12 +33,4 @@ public class FlightManagementApplication {
 		authenticationProvider.setPasswordEncoder(passwordEncoder());
 		return authenticationProvider;
 	}
-
-	@Bean
-	public MultipartResolver multipartResolver() {
-		CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-		resolver.setMaxUploadSize(10000000); // Set maximum file size
-		return resolver;
-	}
-
 }
