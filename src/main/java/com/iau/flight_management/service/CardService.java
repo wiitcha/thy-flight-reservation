@@ -6,7 +6,6 @@ import com.iau.flight_management.model.entity.Member;
 import org.springframework.ui.Model;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CardService {
 

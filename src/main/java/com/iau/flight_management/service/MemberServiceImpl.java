@@ -16,12 +16,10 @@ public class MemberServiceImpl implements MemberService{
     public boolean existsByEmail(String email) {
         return memberRepository.existsByEmail(email);
     }
-
     @Override
     public Optional<Member> findByMemberId(Long id) {
         return memberRepository.findById(id);
     }
-
     @Override
     public Optional<Member> findByEmail(String email) {
         return memberRepository.findByEmail(email);

@@ -1,24 +1,22 @@
 package com.iau.flight_management.controller;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.iau.flight_management.service.CountryService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
+
+@RequiredArgsConstructor
 @Controller
 @RequestMapping
 public class PublicController {
+
+    private final CountryService countryService;
 
     @GetMapping(value = {"/", "/login"})
     public String viewLoginPage() {
@@ -27,25 +25,7 @@ public class PublicController {
 
     @GetMapping("/register")
     public String viewRegisterPage(Model model) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://airlabs.co/api/v9/countries?api_key=c7e5b46c-cab6-4b7c-985e-eef74ed6caf4"))
-                .method("GET", HttpRequest.BodyPublishers.noBody())
-                .build();
-
-        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-
-        JSONObject json = new JSONObject(response.body());
-        JSONArray jsonArray = json.getJSONArray("response");
-
-        List<String> countries = new ArrayList<>();
-
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
-            String name = jsonObject.getString("name");
-            countries.add(name);
-        }
-
-        model.addAttribute("countries", countries);
+        countryService.importCountries(model);
 
         return "/login/register";
     }

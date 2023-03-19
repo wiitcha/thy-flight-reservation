@@ -245,8 +245,8 @@
                                    class="d-none d-lg-block d-xl-block d-xxl-block" height="40px"></a>
     </div>
     <div class="navbar-links nav navbar-nav flex-row mega-menu-main mr-5 d-none d-md-flex flex-for-desktop float-end">
-        <a th:href="@{/home/cards}" id="card-link" class="navbar-link">CARDS</a>
-        <a th:href="@{home/flights}" class="navbar-link">MY FLIGHTS</a>
+        <a th:href="@{/cards}" id="card-link" class="navbar-link">CARDS</a>
+        <a th:href="@{/reservations}" class="navbar-link">MY FLIGHTS</a>
         <a class="navbar-link" href="#" style="text-align: center">EMIR <i class="fa fa-angle-down ml-2" aria-hidden="true"></i></a>
         <a th:href="@{/login}"  id="logout" style="text-align: center">LOGOUT</a>
     </div>
@@ -255,7 +255,7 @@
 <span th:if="${hasAnyCard} and ${param.edit == null} and !${param.new}">
     <div class="cards-container">
         <div th:each="card : ${cards}" class="card">
-            <a class="delete-button" th:href="@{/home/cards/delete(id=${card.getId()})}"
+            <a class="delete-button" th:href="@{/cards/delete(id=${card.getId()})}"
                onclick="return confirm([[${'Are you sure you want to delete the ' + card.name + ' card?' }]]);">
                 <i class="fa fa-times" title="Remove card" aria-hidden="true"></i>
             </a>
@@ -264,18 +264,18 @@
                 <h2 th:text="${card.getName()}"></h2>
                 <hr>
                 <p class="card-number">**** **** **** <span th:text="${card.getNumber().substring(12)}"></span></p>
-                <a th:href="@{/home/cards(edit=${card.getId()})}" class="btn edit-button mb-2">Edit card</a>
+                <a th:href="@{/cards(edit=${card.getId()})}" class="btn edit-button mb-2">Edit card</a>
             </div>
         </div>
         <div class="card" id="plus">
-            <a th:href="@{/home/cards(new)}" ><i class="fa fa-plus" aria-hidden="true"></i></a>
+            <a th:href="@{/cards(new)}" ><i class="fa fa-plus" aria-hidden="true"></i></a>
         </div>
     </div>
 </span>
 
 <span th:if="!${hasAnyCard} or (${param.edit != null}) or ${param.new}">
     <div class="center">
-    <form class="credit-card-form" method="post" th:object="${card}" th:action="@{/home/cards}">
+    <form class="credit-card-form" method="post" th:object="${card}" th:action="@{/cards}">
         <div th:if="${param.deleteSuccess}">
                 <div class="alert alert-success col-xs-offset-1 col-xs-10 text-center">
                     <em>Card successfully deleted!</em>

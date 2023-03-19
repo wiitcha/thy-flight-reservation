@@ -40,16 +40,14 @@ public class ReservationServiceImpl implements ReservationService{
 
         reservationRepository.save(reservation);
 
-        return "redirect:/home/flights?success";
+        return "redirect:/reservations?success";
     }
 
     @Override
     public HashMap<String, String> extractSearchParams(String s) throws JsonProcessingException {
 
         ObjectMapper objectMapper = new ObjectMapper();
-        HashMap<String, String> hashMap = objectMapper.readValue(s, new TypeReference<HashMap<String, String>>() {});
-
-        return hashMap;
+        return objectMapper.readValue(s, new TypeReference<HashMap<String, String>>() {});
     }
 
 

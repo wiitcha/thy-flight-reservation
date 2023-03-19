@@ -248,7 +248,7 @@
 
             formData.set('myMap', JSON.stringify(Object.fromEntries(myMap.entries())));
 
-            fetch('/flights/booking', {
+            fetch('/reservations/booking', {
                 method: 'POST',
                 body: formData
             })
@@ -256,7 +256,7 @@
                     if (!response.ok) {
                         throw new Error('Something went wrong with the reservation');
                     } else {
-                        window.location.replace('/home/flights?success');
+                        window.location.replace('/reservations?success');
                     }
 
                 })
@@ -379,11 +379,10 @@
                                    class="d-none d-lg-block d-xl-block d-xxl-block" height="40px"></a>
     </div>
     <div class="navbar-links nav navbar-nav flex-row mega-menu-main mr-3 d-none d-md-flex flex-for-desktop float-end">
-        <a th:href="@{/home/cards}" class="navbar-link">CARDS</a>
-        <a th:href="@{home/flights}" class="navbar-link">MY FLIGHTS</a>
+        <a th:href="@{/cards}" class="navbar-link">CARDS</a>
+        <a th:href="@{/reservations}" class="navbar-link">MY FLIGHTS</a>
         <a sec:authentication="principal.name"  class="navbar-link text-uppercase font-weight-bold" href="#" style="text-align: center"></a>
         <a class="navbar-link"><span class="fa fa-angle-down"></span></a>
-
     </div>
 </nav>
 

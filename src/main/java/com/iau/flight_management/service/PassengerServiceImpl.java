@@ -17,7 +17,6 @@ public class PassengerServiceImpl implements PassengerService{
 
     @Override
     public List<Passenger> savePassengers(PassengerDTO passengers) {
-
         List<Passenger> passengerList = new ArrayList<>();
 
         for (int i = 0; i < passengers.getName().length; i++) {

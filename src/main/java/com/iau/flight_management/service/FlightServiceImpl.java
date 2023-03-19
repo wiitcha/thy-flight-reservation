@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
@@ -22,12 +23,13 @@ import java.util.*;
 @Service
 public class FlightServiceImpl implements FlightService{
 
+    private final FlightRepository flightRepository;
     private final static String THY_IATA = "TK";
     private final static String THY_ICAO = "THY";
-    private final FlightRepository flightRepository;
+
 
     @Override
-    public HashMap<String, String> extractSearchParameters(MultiValueMap<String, String> formData) {
+    public HashMap<String, String> extractSearchParameters(MultiValueMap<String, String> formData, Model model) throws IOException, InterruptedException {
         HashMap<String, String> searchParameters = new HashMap<>();
 
         searchParameters.put("flightType", formData.getFirst("flight-type"));
@@ -45,6 +47,7 @@ public class FlightServiceImpl implements FlightService{
         searchParameters.put("returnDate", formData.getFirst("return-date"));
         searchParameters.put("passengers", formData.getFirst("passengers"));
 
+        model.addAttribute("flights", getSearchedFlights(searchParameters));
         return searchParameters;
     }
 
@@ -98,7 +101,6 @@ public class FlightServiceImpl implements FlightService{
 
     @Override
     public List<Flight> bookFlights(HashMap<String, String> searchParameters, PassengerDTO passengersAndFlightDetails) {
-
         String[] flights = passengersAndFlightDetails.getFlightDetails().split("/");
 
         List<Flight> flightList = new ArrayList<>();
