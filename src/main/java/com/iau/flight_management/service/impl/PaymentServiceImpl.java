@@ -1,9 +1,11 @@
-package com.iau.flight_management.service;
+package com.iau.flight_management.service.impl;
 
 import com.iau.flight_management.model.dto.PassengerDTO;
 import com.iau.flight_management.model.entity.Card;
 import com.iau.flight_management.model.entity.Payment;
 import com.iau.flight_management.repository.PaymentRepository;
+import com.iau.flight_management.service.CardService;
+import com.iau.flight_management.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +13,7 @@ import java.util.HashMap;
 
 @RequiredArgsConstructor
 @Service
-public class PaymentServiceImpl implements PaymentService{
+public class PaymentServiceImpl implements PaymentService {
 
     private final CardService cardService;
     private final PaymentRepository paymentRepository;

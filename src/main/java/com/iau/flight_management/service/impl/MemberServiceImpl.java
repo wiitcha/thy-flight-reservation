@@ -1,7 +1,8 @@
-package com.iau.flight_management.service;
+package com.iau.flight_management.service.impl;
 
 import com.iau.flight_management.model.entity.Member;
 import com.iau.flight_management.repository.MemberRepository;
+import com.iau.flight_management.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,7 +10,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public class MemberServiceImpl implements MemberService{
+public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     @Override

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" href="data:;base64,iVBORwOKGO=" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,100;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
@@ -139,10 +140,75 @@
 
 
     </style>
+    <script th:inline="javascript">
+        let countryAndCities = [];
+
+        function getCountryAndCities() {
+            let requestOptions = {
+                method: 'GET',
+                redirect: 'follow'
+            };
+
+            let countriesUrl = 'https://countriesnow.space/api/v0.1/countries/states';
+            fetch(countriesUrl, requestOptions)
+                .then((response) => response.json())
+                .then((response) => {
+                    countryAndCities = response.data;
+                })
+                .catch(error => console.log('error', error));
+        }
+
+        function setCountries() {
+            let countrySelect = document.getElementById("country");
+
+            for (let i = 0; i < countryAndCities.length; i++) {
+                const countryOption = document.createElement("option");
+                let country = countryAndCities[i];
+                countryOption.text = country.name;
+                countryOption.value = country.name;
+                countrySelect.appendChild(countryOption);
+            }
+        }
+
+        function showCitiesOfSelectedCountry() {
+            let countrySelect = document.getElementById("country");
+            let citySelect = document.getElementById("city");
+            let selectedCountry = countrySelect.options[countrySelect.selectedIndex].value;
+            citySelect.innerHTML = "";
+
+            for (let i = 0; i < countryAndCities.length; i++) {
+                const country = countryAndCities[i];
+                if (country.name === selectedCountry) {
+                    for (let j = 0; j < country.states.length; j++) {
+                        const cityOption = document.createElement("option");
+                        if (country.name === "Turkey") {
+                            cityOption.text = country.states[j].name.split(" ")[0];
+                            cityOption.value = country.states[j].name.split(" ")[0];
+                        } else {
+                            cityOption.text = country.states[j].name;
+                            cityOption.value = country.states[j].name;
+                        }
+
+                        citySelect.appendChild(cityOption);
+                    }
+                    break;
+                }
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(function () {
+                setCountries();
+            }, 55);
+
+            let countrySelect = document.getElementById("country");
+            countrySelect.addEventListener("change", function () {
+                showCitiesOfSelectedCountry();
+            })
+        });
+    </script>
 </head>
-<body>
-
-
+<body onload="getCountryAndCities()">
 <div class="container">
     <form th:action="@{/auth/register}" th:object="${member}" method="post">
         <div class="row">
@@ -185,12 +251,14 @@
             <div class="col">
                 <label for="country">Country</label>
                 <select id="country" name="country" required>
-                    <option th:each="countryName : ${countries}" th:value="${countryName}" th:text="${countryName}"></option>
+                    <option value=""></option>
                 </select>
             </div>
             <div class="col">
                 <label for="city">City</label>
-                <input type="text" id="city" name="city" required>
+                <select id="city" name="city" required>
+
+                </select>
             </div>
         </div>
         <div class="row">

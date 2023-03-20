@@ -1,6 +1,6 @@
 package com.iau.flight_management.security.config;
 
-import com.iau.flight_management.service.MemberDetailsServiceImpl;
+import com.iau.flight_management.service.impl.MemberDetailsServiceImpl;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,7 +24,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final MemberDetailsServiceImpl employeeDetailsService;
-    private final PasswordEncoder bCryptPasswordEncoder;
 
     @Override
     protected void doFilterInternal(
@@ -32,16 +31,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
         String token = (String) request.getSession().getAttribute("Authorization");
-
-        /*String token = null;
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie: cookies) {
-                if (cookie.getName().contains("Authorization")) {
-                    token = cookie.getValue();
-                }
-            }
-        }*/
 
         if (token == null) {
             filterChain.doFilter(request, response);

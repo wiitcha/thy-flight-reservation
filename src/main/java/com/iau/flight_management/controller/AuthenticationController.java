@@ -3,7 +3,7 @@ package com.iau.flight_management.controller;
 import com.iau.flight_management.model.dto.MemberDTO;
 import com.iau.flight_management.repository.MemberRepository;
 import com.iau.flight_management.security.auth.AuthenticationRequest;
-import com.iau.flight_management.service.AuthenticationServiceImpl;
+import com.iau.flight_management.service.impl.AuthenticationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.MultiValueMap;
@@ -33,9 +33,6 @@ public class AuthenticationController {
         if (token.isEmpty()) {
             return "redirect:/login?error";
         } else {
-            /*Cookie cookie = new Cookie("Authorization", token);
-            cookie.setPath("/employees");
-            response.addCookie(cookie);*/
             request.getSession().setAttribute("Authorization", token);
             return "redirect:/home";
         }

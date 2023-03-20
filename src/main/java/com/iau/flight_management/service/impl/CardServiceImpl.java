@@ -1,9 +1,10 @@
-package com.iau.flight_management.service;
+package com.iau.flight_management.service.impl;
 
 import com.iau.flight_management.model.dto.CardDTO;
 import com.iau.flight_management.model.entity.Card;
 import com.iau.flight_management.model.entity.Member;
 import com.iau.flight_management.repository.CardRepository;
+import com.iau.flight_management.service.CardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -13,7 +14,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public class CardServiceImpl implements CardService{
+public class CardServiceImpl implements CardService {
 
     private final CardRepository cardRepository;
 

@@ -1,8 +1,9 @@
-package com.iau.flight_management.service;
+package com.iau.flight_management.service.impl;
 
 import com.iau.flight_management.model.dto.PassengerDTO;
 import com.iau.flight_management.model.entity.Passenger;
 import com.iau.flight_management.repository.PassengerRepository;
+import com.iau.flight_management.service.PassengerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class PassengerServiceImpl implements PassengerService{
+public class PassengerServiceImpl implements PassengerService {
 
     private final PassengerRepository passengerRepository;
 

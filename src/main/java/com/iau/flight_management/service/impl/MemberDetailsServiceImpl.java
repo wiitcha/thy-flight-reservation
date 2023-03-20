@@ -1,7 +1,8 @@
-package com.iau.flight_management.service;
+package com.iau.flight_management.service.impl;
 
 import com.iau.flight_management.model.entity.Member;
 import com.iau.flight_management.repository.MemberRepository;
+import com.iau.flight_management.service.MemberDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,7 +12,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service("memberDetailsService")
-public class MemberDetailsServiceImpl implements MemberDetailsService{
+public class MemberDetailsServiceImpl implements MemberDetailsService {
 
     private final MemberRepository memberRepository;
 

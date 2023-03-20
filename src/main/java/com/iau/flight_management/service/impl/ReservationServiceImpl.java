@@ -1,4 +1,4 @@
-package com.iau.flight_management.service;
+package com.iau.flight_management.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -6,6 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iau.flight_management.model.dto.PassengerDTO;
 import com.iau.flight_management.model.entity.*;
 import com.iau.flight_management.repository.ReservationRepository;
+import com.iau.flight_management.service.FlightService;
+import com.iau.flight_management.service.PassengerService;
+import com.iau.flight_management.service.PaymentService;
+import com.iau.flight_management.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +17,7 @@ import java.util.*;
 
 @RequiredArgsConstructor
 @Service
-public class ReservationServiceImpl implements ReservationService{
+public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final PaymentService paymentService;
@@ -49,8 +53,4 @@ public class ReservationServiceImpl implements ReservationService{
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(s, new TypeReference<HashMap<String, String>>() {});
     }
-
-
-
-
 }

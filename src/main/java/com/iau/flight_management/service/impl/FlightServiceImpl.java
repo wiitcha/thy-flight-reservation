@@ -1,10 +1,11 @@
-package com.iau.flight_management.service;
+package com.iau.flight_management.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iau.flight_management.model.dto.FlightDTO;
 import com.iau.flight_management.model.dto.PassengerDTO;
 import com.iau.flight_management.model.entity.Flight;
 import com.iau.flight_management.repository.FlightRepository;
+import com.iau.flight_management.service.FlightService;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,12 +22,11 @@ import java.util.*;
 
 @RequiredArgsConstructor
 @Service
-public class FlightServiceImpl implements FlightService{
+public class FlightServiceImpl implements FlightService {
 
     private final FlightRepository flightRepository;
-    private final static String THY_IATA = "TK";
-    private final static String THY_ICAO = "THY";
-
+    private static final  String THY_IATA = "TK";
+    private static final  String THY_ICAO = "THY";
 
     @Override
     public HashMap<String, String> extractSearchParameters(MultiValueMap<String, String> formData, Model model) throws IOException, InterruptedException {
@@ -147,6 +147,4 @@ public class FlightServiceImpl implements FlightService{
                     .build();
         }
     }
-
-
 }

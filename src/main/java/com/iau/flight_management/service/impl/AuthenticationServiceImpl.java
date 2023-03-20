@@ -1,4 +1,4 @@
-package com.iau.flight_management.service;
+package com.iau.flight_management.service.impl;
 
 import com.iau.flight_management.model.dto.MemberDTO;
 import com.iau.flight_management.model.entity.Member;
@@ -6,6 +6,7 @@ import com.iau.flight_management.repository.MemberRepository;
 import com.iau.flight_management.repository.RoleRepository;
 import com.iau.flight_management.security.auth.AuthenticationRequest;
 import com.iau.flight_management.security.config.JwtService;
+import com.iau.flight_management.service.MemberDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
