@@ -577,7 +577,7 @@
                             <label for="select-card" style="font-size: 14px; color: wheat">Select a payment card</label>
                             <th:block th:if="${cards.isEmpty()}">
                                 <div class="text-center">
-                                    <a th:href="@{/home/cards}" class="add-card-btn mt-2 mr-xl-4">Add a payment card</a>
+                                    <a th:href="@{/cards}" class="add-card-btn mt-2 mr-xl-4">Add a payment card</a>
                                 </div>
                             </th:block>
                             <select th:if="${cards.size() > 0}" name="cardId" class="form-control text-center" id="select-card" style="font-size: 12px; font-weight: bold">

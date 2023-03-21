@@ -30,7 +30,7 @@ public class AuthenticationController {
                 formData.getFirst("password")
         ));
 
-        if (token.isEmpty()) {
+        if (token == null) {
             return "redirect:/login?error";
         } else {
             request.getSession().setAttribute("Authorization", token);

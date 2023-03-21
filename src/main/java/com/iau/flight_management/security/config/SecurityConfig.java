@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -27,24 +28,27 @@ public class SecurityConfig {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .antMatchers("/css/**","/js/**","/auth/**", "/login/**","/", "/register/**")
-                .permitAll()
-                //.antMatchers("/employees").hasAnyRole("ROLE_USER", "ROLE_MANAGER", "ROLE_ADMIN")
-                .anyRequest()
-                .authenticated()
+                    .antMatchers("/css/**","/js/**","/auth/**", "/login/**","/", "/register/**")
+                    .permitAll()
+//                .antMatchers("/employees").hasAnyRole("ROLE_USER", "ROLE_MANAGER", "ROLE_ADMIN")
+                    .anyRequest()
+                    .authenticated()
                 .and()
-                /*.formLogin()
-                .loginPage("/login")
-                .failureUrl("/login?error")
-                .and()*/
+                .formLogin()
+                    .loginPage("/login")
+                    .and()
+                .exceptionHandling()
+                    .accessDeniedPage("/login?error")
+                    .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login?error"))
+                    .and()
                 .logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll().deleteCookies("JSESSIONID"))
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .rememberMe()
-                .tokenValiditySeconds(86400)
-                .key("trakyali")
-                .and()
+                    .rememberMe()
+                    .tokenValiditySeconds(86400)
+                    .key("trakyali")
+                    .and()
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 

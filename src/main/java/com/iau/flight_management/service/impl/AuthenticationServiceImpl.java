@@ -8,6 +8,7 @@ import com.iau.flight_management.security.auth.AuthenticationRequest;
 import com.iau.flight_management.security.config.JwtService;
 import com.iau.flight_management.service.MemberDetailsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +27,7 @@ public class AuthenticationServiceImpl {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
     public String register(MemberDTO request) {
         var user = Member.builder()
@@ -36,7 +38,7 @@ public class AuthenticationServiceImpl {
                 .country(request.getCountry())
                 .city(request.getCity())
                 .address(request.getAddress())
-                .roles(new ArrayList<>(roleRepository.findAllByTitleIs("USER")))
+                .roles(new ArrayList<>(roleRepository.findAllByTitleIs("ROLE_USER")))
                 .build();
 
         memberRepository.save(user);
@@ -50,6 +52,7 @@ public class AuthenticationServiceImpl {
         ) {
             user = this.memberDetailsService.loadUserByUsername(request.getEmail());
         }
+
         if (user == null || !passwordEncoder.matches(request.getPassword(),user.getPassword())) {
             return null;
         }

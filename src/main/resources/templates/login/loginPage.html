@@ -143,7 +143,14 @@
 
 <div class="container">
     <form th:action="@{/auth/authenticate}" method="post">
+
         <h2>LOGIN</h2>
+        <div th:if="${param.error}">
+            <div class="alert alert-danger alert-dismissible fade show col-xs-offset-1 col-xs-10 text-center">
+                <em>Incorrect email or password.</em>
+            </div>
+        </div>
+        <hr>
         <div class="form-group">
             <label for="email">Email</label>
             <input type="text" id="email" name="email" required>
