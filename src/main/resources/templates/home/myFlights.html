@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -19,13 +20,415 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
+    <style>
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #232b38;
+            padding: 20px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar-logo {
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .navbar-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-links a {
+            color: #ececec;
+            border: 3px solid #232b38;
+            padding: 15px 30px;
+            text-decoration: none;
+            transition: .2s;
+            font-weight: bold;
+
+        }
+
+        .navbar-links a:hover {
+            /*background-color: #20242c;*/
+            color: white;
+            border-bottom: 3px solid red;
+
+        }
+
+        .navbar-link {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .content {
+            /*height: 100vh;*/
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 5px;
+
+
+        }
+
+        .flights-container {
+            box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+            flex-direction: column;
+            border: 1px solid white;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            padding: 0;
+        }
+
+        .icon-container {
+            /* Set the container height and line-height to match */
+            height: 24px;
+            line-height: 24px;
+            /* Set the container background color */
+            /* Set the container padding and border-radius to make it a circle */
+            padding: 4px;
+            /*border-radius: 50%;*/
+            /* Add a transition to animate the box-shadow */
+            transition: box-shadow 0.2s ease-in-out;
+        }
+
+        .icon {
+            /* Set the icon size and color */
+            font-size: 24px;
+            color: #333;
+            /* Set the icon height and width to match the container */
+            height: 24px;
+            width: 24px;
+            /* Set the initial box-shadow */
+            box-shadow: none;
+            /* Set the border-radius to make it a circle */
+            border-radius: 50%;
+            /* Add a transition to animate the box-shadow */
+            transition: box-shadow 0.2s ease-in-out;
+            cursor: pointer;
+        }
+
+        .icon:hover {
+            /* Add a box-shadow on hover */
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+            /* Add a slight scale effect on hover */
+            /*transform: scale(1.1);*/
+        }
+
+        .flight-demo {
+            box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+            padding: 0;
+            border-radius: 5px;
+            border: 0px solid black;
+            color: #6c7c84;
+        }
+
+        .return-flight {
+            border-left: 2px dotted gray;
+            border-right: 2px dotted gray;
+        }
+
+        .flights-header {
+            background-color: #404c5c;
+            color: white;
+            font-weight: bold;
+            margin: 0;
+            border: 1px solid #404c5c;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+
+        .flight-details {
+            padding: 30px;
+        }
+
+        .summary {
+            background-color: #ececec;
+            border-radius: 10px;
+        }
+
+        .payment {
+            padding: 40px 0;
+        }
+
+        table td {
+            padding: 15px 25px 12px !important;
+        }
+
+        tbody tr {
+            transition: .2s;
+        }
+
+        tbody tr:hover {
+            /*box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;*/
+            box-shadow: 0 4px 8px 0 rgba(164, 103, 103, 0.05);
+            background-color: #ececec;
+            cursor: pointer;
+        }
+
+        .flight-type {
+            background-color: #f01c34;
+            color: white;
+            padding: 5px 40px;
+            font-size: 15px;
+            display: inline-block;
+            margin-bottom: 10px;
+            margin-right: 0;
+        }
+
+        h3 {
+            font-weight: lighter;
+        }
+
+    </style>
 </head>
 <body>
+<nav class="navbar">
+    <div class="navbar-logo">
+        <a th:href="@{/home}"><img src="https://cdn.turkishairlines.com/m/2190da9e53a70e4e/original/THY-LOGO.png"
+                                   class="d-none d-lg-block d-xl-block d-xxl-block" height="40px"></a>
+    </div>
+    <div class="navbar-links nav navbar-nav flex-row mega-menu-main mr-3 d-none d-md-flex flex-for-desktop float-end">
+        <a th:href="@{/cards}" class="navbar-link">CARDS</a>
+        <a th:href="@{/reservations}" class="navbar-link">MY FLIGHTS</a>
+        <a sec:authentication="principal.name"  class="navbar-link text-uppercase font-weight-bold" href="#" style="text-align: center"></a>
+        <a class="navbar-link"><span class="fa fa-angle-down"></span></a>
+    </div>
+</nav>
+
 <div th:if="${param.success}">
     <div class="alert alert-success alert-dismissible fade show col-xs-offset-1 col-xs-10 text-center">
         <em>Your booking has been successfully completed!</em>
     </div>
 </div>
+<div class="content">
+    <div class="flights-container d-flex align-items-center justify-content-start col-lg-8">
+        <div class="flight-demo row d-flex align-items- justify-content-start flex-column col-lg-12">
+            <div class="flights-header">
+                <div class="row justify-content-between p-3">
+                    <div class="col-6 d-flex align-content-start justify-content-center">
+                        <div class="col-1"><span class="fa fa-check-circle" aria-hidden="true"></span></div>
+                        <div class="col-11"><span>ROUND TRIP | 02-06-2023</span></div>
+                    </div>
+                    <div class="col-6"><span class="pull-right"># 3511515</span></div>
+                </div>
+            </div>
+            <div class="row p-3 mx-0 col-12">
+                <div class="flights p-3 mt-3 col-5">
+                    <div class="row">
+                        <div class="row align-items-center">
+                            <div class="col-sm-2 text-center justify-content-start">
+                                <p class="font-weight-bold">02:20</p>
+                                <h5>IST</h5>
+                                <p>Istanbul</p>
+                            </div>
+                            <div class="col-sm-8 d-flex flex-column align-items-center justify-content-center mb-2">
+                                <span class=" mb-2">Direct</span>
+                                <div class="d-flex w-100">
+                                    <hr class="flex-grow-1 mx-1 w-100" style="height: 2px">
+                                    <span class="fa fa-angle-right mt-2"></span>
+                                </div>
+                                <img src="https://www.turkishairlines.com/theme/img/logo-top-white-small-current.png" style="height: 24px">
+                            </div>
+                            <div class="col-sm-2 text-center justify-content-start">
+                                <p class="font-weight-bold">02:20</p>
+                                <h5>FRA</h5>
+                                <p>Frankfurt </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flights return-flight p-3 mt-3 col-5">
+                    <div class="row">
+                        <div class="row align-items-center">
+                            <div class="col-sm-2 text-center justify-content-start">
+                                <p class="font-weight-bold">02:20</p>
+                                <h5>IST</h5>
+                                <p>Istanbul</p>
+                            </div>
+                            <div class="col-sm-8 d-flex flex-column align-items-center justify-content-center mb-2">
+                                <span class=" mb-2">Direct</span>
+                                <div class="d-flex w-100">
+                                    <span class="fa fa-angle-left mt-2"></span>
+                                    <hr class="flex-grow-1 mx-1 w-100" style="height: 2px">
+                                </div>
+                                <img src="https://www.turkishairlines.com/theme/img/logo-top-white-small-current.png" style="height: 24px">
+                            </div>
+                            <div class="col-sm-2 text-center justify-content-start">
+                                <p class="font-weight-bold">02:20</p>
+                                <h5>FRA</h5>
+                                <p>Frankfurt </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flight-details-button col-2 d-flex justify-content-center align-items-center">
+                    <div class="icon-container text-center h-50 ">
+                        <p class="font-weight-bold">Booking details</p>
+                        <span class="fa fa-angle-down font-weight-bold icon" style="color: #6c7c84"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flight-details row d-flex justify-content-start align-items-center col-lg-12">
+            <div class="summary p-3">
+                <div class="row">
+                    <div class="col-6 ">
+                        <h2 class="font-weight-lighter" style="font-size: 36px">Summary</h2>
+                        </div>
+                    <div class="col-6 d-flex flex-column align-content-start justify-content-end text-center">
+                        <div class="row align-self-end col-md-5">
+                            <h2 class="flight-type rounded-2" style="font-size: 24px"># 156156</h2>
+                        </div>
+                        <div class="row align-self-end col-5">
+                            <p>Booking reference</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <h5 class="font-weight-light">Reservation owner: Emir Güler</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="payment fs-4">
+                <div class="col-12 p-0">
+                    <div class="col-6 p-0">
+                        <span class="col-5">VISA **********12</span>
+                        <span class="fa fa-credit-card-alt col-1 text-center" aria-hidden="true"></span>
+                        <span class="col-5">İş Bankasi</span>
+                    </div>
+                    <div class="col-6"></div>
+                </div>
+            </div>
+            <div class="col-12 mb-4">
+                <hr>
+            </div>
 
+            <div class="outbound-trip">
+                <div class="outbound-header">
+                    <div class="row">
+                        <div class="col-12">
+                            <h5 class="flight-type">OUTBOUND TRIP</h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <h3>Istanbul to Manchester on Friday 16 December</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="outbound-flight-table">
+                    <div class="row">
+                        <div class="col-12">
+                            <table class="table table-bordered">
+                                <thead style="background-color: #687484; color: white">
+                                <tr>
+                                    <th style="width: 25%">FLIGHT</th>
+                                    <th style="width: 25%">FROM</th>
+                                    <th style="width: 25%">TO</th>
+                                    <th style="width: 25%">DURATION</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>THY</td>
+                                    <td>ISTANBUL</td>
+                                    <td>ANKARA</td>
+                                    <td>2h</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="inbound-trip mt-2">
+                <div class="inbound-header">
+                    <div class="row">
+                        <div class="col-12">
+                            <h5 class="flight-type">INBOUND TRIP</h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <h3>Manchester to Istanbul on Friday 18 December</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="inbound-flight-table">
+                    <div class="row">
+                        <div class="col-12">
+                            <table class="table table-bordered">
+                                <thead style="background-color: #687484; color: white">
+                                <tr>
+                                    <th style="width: 25%">FLIGHT</th>
+                                    <th style="width: 25%">FROM</th>
+                                    <th style="width: 25%">TO</th>
+                                    <th style="width: 25%">DURATION</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>THY</td>
+                                    <td>ISTANBUL</td>
+                                    <td>ANKARA</td>
+                                    <td>2h</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="total mt-4 mb-4">
+                <div class="row">
+                    <div class="col-6 mb-0">
+                        <h1 class="font-weight-normal mt-1" style="font-size: 48px">Total</h1>
+                    </div>
+                    <div class="col-6 d-flex justify-content-end align-content-start">
+                        <h2 class="mr-1"><i class="fa fa-try" aria-hidden="true"></i></h2>
+                        <h1 class="mr-1" style="font-size: 60px">2568</h1>
+                        <span class="position-absolute" style="right: 0; top: -5px;">86</span>
+                    </div>
+
+                </div>
+            </div>
+            <hr>
+            <div class="passengers">
+                <div class="row">
+                    <div class="col-12">
+                        <table class="table table-bordered table-striped">
+                            <thead style="background-color: #404c5c; color: white">
+                            <tr>
+                                <th>PASSENGER</th>
+                                <th>DATE OF BIRTH</th>
+                                <th>PHONE NUMBER</th>
+                                <th>ID</th>
+                            </tr>
+
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

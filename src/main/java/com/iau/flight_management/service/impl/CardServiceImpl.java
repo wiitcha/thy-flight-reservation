@@ -39,7 +39,6 @@ public class CardServiceImpl implements CardService {
             hasAnyCard= true;
             model.addAttribute("cards", member.getCards());
         }
-
         model.addAttribute("hasAnyCard", hasAnyCard);
 
         return "home/myCards";

@@ -21,6 +21,10 @@
         * {
             font-family: 'Roboto', sans-serif;
         }
+
+        body {
+            background-color: #384454
+        }
         .container {
             display: flex;
             justify-content: center;
@@ -29,6 +33,7 @@
             width: 100%;
             max-width: 1200px; /* Optional: set a maximum width for larger screens */
             margin: 0 auto;
+
         }
 
         form {
@@ -38,7 +43,7 @@
             border-radius: 5px;
             max-width: 800px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
+            background-color: #F5F5F5;
         }
 
         h2 {
@@ -76,27 +81,29 @@
             padding: 10px;
             border: none;
             border-radius: 5px;
-            background-color: #007bff;
+            background-color: #f01c34;
             color: #fff;
             cursor: pointer;
             font-size: 16px;
             margin-top: 20px;
             transition: .2s;
+            font-weight: bold;
         }
 
         button[type="submit"]:hover,
         button[type="button"]:hover {
-            background-color: #0062cc;
+            background-color: #F84659FF;
+            color: white
         }
 
         button[type="button"]:last-of-type {
             background-color: transparent;
-            color: #007bff;
+            color: #f01c34;
         }
 
         button[type="button"]:last-of-type:hover {
             background-color: transparent;
-            color: #0062cc;
+            color: #F84659FF;
         }
 
         .forgot-password {
@@ -143,6 +150,13 @@
     <script th:inline="javascript">
         let countryAndCities = [];
 
+        document.addEventListener("DOMContentLoaded", function () {
+            let countrySelect = document.getElementById("country");
+            countrySelect.addEventListener("change", function () {
+                showCitiesOfSelectedCountry();
+            })
+        });
+
         function getCountryAndCities() {
             let requestOptions = {
                 method: 'GET',
@@ -154,6 +168,7 @@
                 .then((response) => response.json())
                 .then((response) => {
                     countryAndCities = response.data;
+                    setCountries();
                 })
                 .catch(error => console.log('error', error));
         }
@@ -176,36 +191,31 @@
             let selectedCountry = countrySelect.options[countrySelect.selectedIndex].value;
             citySelect.innerHTML = "";
 
-            for (let i = 0; i < countryAndCities.length; i++) {
-                const country = countryAndCities[i];
-                if (country.name === selectedCountry) {
-                    for (let j = 0; j < country.states.length; j++) {
-                        const cityOption = document.createElement("option");
-                        if (country.name === "Turkey") {
-                            cityOption.text = country.states[j].name.split(" ")[0];
-                            cityOption.value = country.states[j].name.split(" ")[0];
-                        } else {
-                            cityOption.text = country.states[j].name;
-                            cityOption.value = country.states[j].name;
+            if (selectedCountry === "") {
+                citySelect.disabled = true;
+            } else {
+                citySelect.disabled = false;
+                for (let i = 0; i < countryAndCities.length; i++) {
+                    const country = countryAndCities[i];
+                    if (country.name === selectedCountry) {
+                        for (let j = 0; j < country.states.length; j++) {
+                            const cityOption = document.createElement("option");
+                            if (country.name === "Turkey") {
+                                cityOption.text = country.states[j].name.split(" ")[0];
+                                cityOption.value = country.states[j].name.split(" ")[0];
+                            } else {
+                                cityOption.text = country.states[j].name;
+                                cityOption.value = country.states[j].name;
+                            }
+                            citySelect.appendChild(cityOption);
                         }
-
-                        citySelect.appendChild(cityOption);
+                        break;
                     }
-                    break;
                 }
             }
+
+
         }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            setTimeout(function () {
-                setCountries();
-            }, 55);
-
-            let countrySelect = document.getElementById("country");
-            countrySelect.addEventListener("change", function () {
-                showCitiesOfSelectedCountry();
-            })
-        });
     </script>
 </head>
 <body onload="getCountryAndCities()">
@@ -215,9 +225,10 @@
             <div class="form-group pull pull-left">
                 <a th:href="@{/login}" class="btn btn-secondary">Back</a>
             </div>
+            <h2 class="d-inline">REGISTER</h2>
             <div th:if="${param.error}">
-                <div class="alert alert-danger alert-dismissible fade show col-xs-offset-1 col-xs-10 text-center">
-                    <em>User already exists.</em>
+                <div class="alert alert-danger text-center fade show" role="alert">
+                    <em><strong>User already exists!</strong></em>
                 </div>
             </div>
             <div th:if="${param.success}">
@@ -225,7 +236,6 @@
                     <em>Successfully signed up!</em>
                 </div>
             </div>
-            <h2 class="d-inline">REGISTER</h2>
         </div>
         <div class="row">
             <div class="col">
@@ -256,7 +266,7 @@
             </div>
             <div class="col">
                 <label for="city">City</label>
-                <select id="city" name="city" required>
+                <select id="city" name="city" required disabled>
 
                 </select>
             </div>
