@@ -370,6 +370,24 @@
                 tableBody.children.item(i).className = "d-none";
             }
         }
+
+        function formatPhone(phoneInput) {
+            let phone = phoneInput.value.replace(/\D/g, '');
+
+            let formattedPhone = '';
+            if (phone.length > 0) {
+                formattedPhone = '(' + phone.substring(0, 3);
+                if (phone.length > 3) {
+                    formattedPhone += ') ' + phone.substring(3, 6);
+                }
+                if (phone.length > 6) {
+                    formattedPhone += '-' + phone.substring(6);
+                }
+            }
+
+            phoneInput.value = formattedPhone;
+        }
+    </script>
     </script>
 </head>
 <body onload="hideReturnFlights()">
@@ -532,7 +550,7 @@
                         <div class="form-row">
                             <div class="form-group col-md-12">
                                 <label class="font-weight-bold" for="phoneNumber">Phone Number:</label>
-                                <input type="tel" id="phoneNumber" name="phoneNumber" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" class="form-control" required>
+                                <input type="tel" maxlength="14" onkeyup="formatPhone(this)" id="phoneNumber" name="phoneNumber" pattern="\(\d{3}\) \d{3}-\d{4}" class="form-control" placeholder="(123) 456-7890" required>
                             </div>
                         </div>
                     </div>

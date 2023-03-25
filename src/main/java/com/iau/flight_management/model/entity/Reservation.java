@@ -21,6 +21,9 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "reservation_code")
+    private String reservationCode;
+
     @Column(name = "date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;

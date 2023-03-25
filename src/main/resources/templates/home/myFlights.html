@@ -172,9 +172,8 @@
 
         tbody tr:hover {
             /*box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;*/
-            box-shadow: 0 4px 8px 0 rgba(164, 103, 103, 0.05);
-            background-color: #ececec;
-            cursor: pointer;
+            /*box-shadow: 0 4px 8px 0 rgba(164, 103, 103, 0.05);*/
+            /*background-color: #ececec;*/
         }
 
         .flight-type {
@@ -190,6 +189,21 @@
         h3 {
             font-weight: lighter;
         }
+
+        .passenger-edit {
+            text-decoration: none;
+            cursor: pointer;
+            color: #f01c34;
+            transition: .2s;
+        }
+
+        .passenger-edit:hover {
+            /*text-decoration: none;*/
+            color: #F84659FF;
+        }
+
+
+
 
     </style>
 </head>
@@ -409,18 +423,57 @@
             <div class="passengers">
                 <div class="row">
                     <div class="col-12">
-                        <table class="table table-bordered table-striped">
+                        <table class="table table-bordered">
                             <thead style="background-color: #404c5c; color: white">
                             <tr>
-                                <th>PASSENGER</th>
-                                <th>DATE OF BIRTH</th>
-                                <th>PHONE NUMBER</th>
-                                <th>ID</th>
+                                <th style="width: 30%">PASSENGER</th>
+                                <th style="width: 25%">DATE OF BIRTH</th>
+                                <th style="width: 25%">PHONE NUMBER</th>
+                                <th style="width: 20%">ID</th>
                             </tr>
-
                             </thead>
                             <tbody>
-
+                                <tr>
+                                    <td class="d-flex justify-content-center align-items-start">
+                                        <div class="col-4">
+                                            <div class="image d-flex justify-content-center align-items-center rounded-circle" style="width: 65px; height: 65px;
+                                                background-color: #f01c34">
+                                                <h5 class="text-white m-0">EG</h5>
+                                            </div>
+                                        </div>
+                                        <div class="col-8 justify-content-center">
+                                            <div class="row">
+                                                <h6 class="font-weight-bold m-0">Mr. Emir GÜLER</h6>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12 m-0">
+                                                    <span style="font-size: 12px">Passenger info • </span>
+                                                    <a class="passenger-edit m-0 font-weight-bold" style="font-size: 12px">Edit</a>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12 m-0">
+                                                    <span class="font-weight-bold m-0" style="font-size: 12px">Ticket number #25651651</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center text-center mt-3">
+                                            <h3>03-09-2000</h3>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center text-center mt-3">
+                                            <h3>(531) 251-1541</h3>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center text-center mt-3">
+                                            <h3>23</h3>
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>

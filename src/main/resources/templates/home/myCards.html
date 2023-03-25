@@ -285,7 +285,6 @@
         <span th:if="!${param.edit} "><h2 class="mb-4">Add a new card</h2></span>
         <hr>
         <div class="form-group">
-
             <label for="card-name">Card Name*</label>
             <input type="text" maxlength="20" th:value="${cardEdit != null} ? ${cardEdit.getName()}: ''" class="form-control" id="card-name" name="name" placeholder="Enter card name" required>
         </div>
@@ -329,7 +328,5 @@
     </form>
 </div>
 </span>
-
-
 </body>
 </html>

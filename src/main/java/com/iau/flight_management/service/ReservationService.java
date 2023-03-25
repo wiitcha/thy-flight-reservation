@@ -12,5 +12,7 @@ public interface ReservationService {
 
     HashMap<String, String> extractSearchParams(String s) throws JsonProcessingException;
 
+    String generateReservationCode();
+
 
 }

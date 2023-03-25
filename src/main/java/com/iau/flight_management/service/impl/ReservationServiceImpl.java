@@ -30,21 +30,26 @@ public class ReservationServiceImpl implements ReservationService {
         String[] flights = passengersAndFlightDetails.getFlightDetails().split("/");
 
         Payment payment = paymentService.makePayment(flights, passengersAndFlightDetails, searchParameters);
-        List<Passenger> passengerList = passengerService.savePassengers(passengersAndFlightDetails);
-        List<Flight> flightList = flightService.bookFlights(searchParameters, passengersAndFlightDetails);
 
-        Reservation reservation = Reservation.builder()
-                .member(member)
-                .payment(payment)
-                .passengers(passengerList)
-                .flights(flightList)
-                .hasExtraLuggage(passengersAndFlightDetails.isHasExtraLuggage())
-                .date(new Date())
-                .build();
+        if (payment != null) {
+            List<Passenger> passengerList = passengerService.savePassengers(passengersAndFlightDetails);
+            List<Flight> flightList = flightService.bookFlights(searchParameters, passengersAndFlightDetails);
 
-        reservationRepository.save(reservation);
+            Reservation reservation = Reservation.builder()
+                    .member(member)
+                    .payment(payment)
+                    .passengers(passengerList)
+                    .flights(flightList)
+                    .hasExtraLuggage(passengersAndFlightDetails.isHasExtraLuggage())
+                    .reservationCode(generateReservationCode())
+                    .date(new Date())
+                    .build();
 
-        return "redirect:/reservations?success";
+            reservationRepository.save(reservation);
+
+            return "redirect:/reservations?success";
+        }
+       return "redirect:/home?error";
     }
 
     @Override
@@ -52,5 +57,27 @@ public class ReservationServiceImpl implements ReservationService {
 
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(s, new TypeReference<HashMap<String, String>>() {});
+    }
+
+    @Override
+    public String generateReservationCode() {
+        String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+        int length = 6;
+        String reservationCode;
+
+        do {
+            sb.setLength(0);
+
+            for (int i = 0; i < length; i++) {
+                int index = random.nextInt(alphabet.length());
+                char randomChar = alphabet.charAt(index);
+                sb.append(randomChar);
+            }
+            reservationCode = sb.toString();
+        } while (reservationRepository.existsByReservationCode(reservationCode));
+
+        return reservationCode;
     }
 }

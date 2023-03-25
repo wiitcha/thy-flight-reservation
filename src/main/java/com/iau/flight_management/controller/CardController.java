@@ -10,8 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
+
 @RequiredArgsConstructor
-@SessionAttributes("Authorization")
 @Controller
 @RequestMapping("/cards")
 public class CardController {
@@ -19,39 +21,38 @@ public class CardController {
     private final JwtService jwtService;
     private final MemberService memberService;
     private final CardService cardService;
-    private static final String SECURITY_LOGOUT = "redirect:/home?logout";
+    private static final String SECURITY_LOGOUT = "redirect:/login?logout";
 
     @GetMapping()
     public String showMyCards(@RequestParam(value = "edit", required = false) Long cardId,
-                              @ModelAttribute("Authorization") String token,
+                              HttpServletRequest request,
                               Model model) {
 
+        String token = request.getSession().getAttribute("Authorization").toString();
         String email = jwtService.extractUsername(token);
+        Optional<Member> member = memberService.findByEmail(email);
 
-        if (memberService.existsByEmail(email)) {
-            Member member = memberService.findByEmail(email).get();
-
+        if (member.isPresent()) {
             if (cardId != null) {
-                return cardService.editCard(cardId, member, model);
+                return cardService.editCard(cardId, member.get(), model);
             }
-
-            return cardService.showMyCards(member, model);
+            return cardService.showMyCards(member.get(), model);
         }
-
-        return SECURITY_LOGOUT; // for security
+        return SECURITY_LOGOUT;
     }
 
     @PostMapping()
-    public String addCard(@ModelAttribute("Authorization") String token,
+    public String addCard(HttpServletRequest request,
                           @ModelAttribute("cardObject") CardDTO cardDTO) {
 
+        String token = request.getSession().getAttribute("Authorization").toString();
         String email = jwtService.extractUsername(token);
+        Optional<Member> member = memberService.findByEmail(email);
 
-        if (memberService.existsByEmail(email)) {
-            Member member = memberService.findByEmail(email).get();
-
-            return cardService.saveCard(cardDTO, member);
+        if (member.isPresent()) {
+            return cardService.saveCard(cardDTO, member.get());
         }
+
         return SECURITY_LOGOUT;
     }
 

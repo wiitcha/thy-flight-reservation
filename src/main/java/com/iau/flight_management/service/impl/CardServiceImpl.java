@@ -55,9 +55,9 @@ public class CardServiceImpl implements CardService {
             Card card = cardRepository.findById(cardId).get();
             cardRepository.delete(card);
 
-            return "redirect:/home/cards?deleteSuccess";
+            return "redirect:/cards?deleteSuccess";
         }
-        return "redirect:/home/cards?deleteError";
+        return "redirect:/cards?deleteError";
     }
 
     @Override
@@ -76,9 +76,9 @@ public class CardServiceImpl implements CardService {
 
             cardRepository.save(card);
 
-            return "redirect:/home/cards?success";
+            return "redirect:/cards";
         } else {
-            return "redirect:/home/cards?error";
+            return "redirect:/cards?duplicate";
         }
     }
 
