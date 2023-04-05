@@ -1,13 +1,15 @@
 package com.iau.flight_management.service;
 
+import com.iau.flight_management.model.dto.FlightDTO;
 import com.iau.flight_management.model.dto.PassengerDTO;
-import com.iau.flight_management.model.entity.Payment;
+import com.iau.flight_management.model.entity.*;
 
-import java.util.HashMap;
+import java.math.BigDecimal;
+import java.util.List;
 
 public interface PaymentService {
 
-    double calculateTotal(String[] flights, int passengerCount);
-    Payment makePayment(String[] flights, PassengerDTO passengersAndFlightDetails, HashMap<String, String> searchParameters);
+    BigDecimal calculateTotal(List<FlightDTO> flights, double passengerCount);
+    Payment makePayment(List<FlightDTO> flights, Long cardId, List<PassengerDTO> passengerDTOS);
 
 }

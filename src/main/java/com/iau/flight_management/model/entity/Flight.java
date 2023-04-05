@@ -53,6 +53,9 @@ public class Flight {
     @Column(name = "flight_iata_code")
     private String flightIataCode;
 
+    @Column(name = "duration")
+    private String duration;
+
     @Column(name = "price")
     private double price;
 

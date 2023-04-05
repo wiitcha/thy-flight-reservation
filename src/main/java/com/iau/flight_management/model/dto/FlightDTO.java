@@ -1,32 +1,35 @@
 package com.iau.flight_management.model.dto;
 
-import com.iau.flight_management.model.entity.Reservation;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
-import java.sql.Time;
 import java.util.List;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class FlightDTO {
-
     private Long id;
     private String departureAirport;
+    @JsonProperty("dep_iata")
+    private String departureAirportIataCode;
     private String departureCity;
-    private String destinationAirport;
-    private String destinationCity;
-    private Date date;
-    private List<Reservation> reservations;
-    private String arr_iata;
-    private String dep_iata;
-    private String arr_time;
-    private String dep_time;
+    private String arrivalAirport;
+    @JsonProperty("arr_iata")
+    private String arrivalAirportIataCode;
+    private String arrivalCity;
+    @JsonProperty("dep_time")
+    private String departureTime;
+    @JsonProperty("arr_time")
+    private String arrivalTime;
+    private String date;
+    @JsonProperty("flight_iata")
+    private String flightIataCode;
     private String duration;
-    private String flight_iata;
-    private String status;
-    private int price;
+    private double price;
+    private List<ReservationDTO> reservations;
 }

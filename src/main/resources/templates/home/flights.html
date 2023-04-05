@@ -59,7 +59,7 @@
             justify-content: space-between;
             align-items: center;
             background-color: #232b38;
-            padding: 20px;
+            padding: 10px 20px;
             box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
         }
 
@@ -96,6 +96,10 @@
             text-decoration: none;
             color: #333;
             font-size: 18px;
+        }
+
+        .container {
+            max-width: 1400px;
         }
 
         .centered-content {
@@ -232,25 +236,132 @@
     </style>
     <script th:inline="javascript">
         /*<![CDATA[*/
-        //let flightSearchApiToken = /*[[${flightSearchAPIToken}]]*/ '';
         let flights = /*[[${flights}]]*/ [];
         let searchParameters = /*[[${searchParameters}]]*/ {};
         /*]]>*/
 
         let selectedFlights = [];
 
-        function sendReservationInfos(event) {
+        class Flight {
+            constructor(departureAirport,
+                        departureAirportIataCode,
+                        departureCity,
+                        arrivalAirport,
+                        arrivalAirportIataCode,
+                        arrivalCity,
+                        departureTime,
+                        arrivalTime,
+                        flightIataCode,
+                        duration,
+                        price,
+                        date) {
+                this.departureAirport = departureAirport;
+                this.dep_iata = departureAirportIataCode;
+                this.departureCity = departureCity;
+                this.arrivalAirport = arrivalAirport;
+                this.arr_iata = arrivalAirportIataCode;
+                this.arrivalCity = arrivalCity;
+                this.dep_time = departureTime;
+                this.arr_time = arrivalTime;
+                this.flight_iata = flightIataCode;
+                this.duration = duration;
+                this.price = price;
+                this.date = date;
+            }
+        }
+
+        class Passenger {
+            constructor(name,
+                        surname,
+                        dateOfBirth,
+                        gender,
+                        phoneNumber
+                        ) {
+                this.name = name;
+                this.surname = surname;
+                this.dateOfBirth = dateOfBirth;
+                this.gender = gender;
+                this.phoneNumber = phoneNumber;
+            }
+        }
+
+        function fillFormObject(formObject) {
+            for (let i = 0; i < selectedFlights.length; i++) {
+                if (i > 0) {
+                    const bookedFlight = new Flight(searchParameters.arrivalAirport,
+                        selectedFlights[i].arr_iata,
+                        searchParameters.arrivalCity,
+                        searchParameters.departureAirport,
+                        selectedFlights[i].dep_iata,
+                        searchParameters.departureCity,
+                        selectedFlights[i].dep_time.split(' ')[1],
+                        selectedFlights[i].arr_time.split(' ')[1],
+                        selectedFlights[i].flight_iata,
+                        selectedFlights[i].duration,
+                        selectedFlights[i].price);
+
+                    bookedFlight.date = searchParameters.returnDate;
+                    formObject.flights.push(bookedFlight);
+                } else {
+                    const bookedFlight = new Flight(searchParameters.departureAirport,
+                        selectedFlights[i].dep_iata,
+                        searchParameters.departureCity,
+                        searchParameters.arrivalAirport,
+                        selectedFlights[i].arr_iata,
+                        searchParameters.arrivalCity,
+                        selectedFlights[i].dep_time.split(' ')[1],
+                        selectedFlights[i].arr_time.split(' ')[1],
+                        selectedFlights[i].flight_iata,
+                        selectedFlights[i].duration,
+                        selectedFlights[i].price);
+
+                    bookedFlight.date = searchParameters.departureDate;
+                    formObject.flights.push(bookedFlight);
+                }
+            }
+
+            for (let i = 1; i <= searchParameters.passengers; i++) {
+                const name = document.getElementById("name" + i).value;
+                const surname = document.getElementById("surname" + i).value;
+                const dateOfBirth = document.getElementById("dateOfBirth" + i).value;
+                const gender = document.getElementById("gender" + i).value;
+                const phoneNumber = document.getElementById("phoneNumber" + i).value;
+                const passenger = new Passenger(name, surname, dateOfBirth, gender, phoneNumber);
+
+                formObject.passengers.push(passenger);
+            }
+        }
+
+
+        async function sendReservationInfos(event) {
             event.preventDefault();
 
-            const form = document.querySelector('#reservationForm');
-            const formData = new FormData(form);
-            const myMap = new Map(Object.entries(searchParameters));
+            let flightReservationModel = {
+                passengers: [],
+                flights: [],
+                hasExtraLuggage: document.querySelector('#hasExtraLuggage').checked,
+                cardId: document.getElementById('select-card').value,
+                flightType: searchParameters.flightType
+            };
 
-            formData.set('myMap', JSON.stringify(Object.fromEntries(myMap.entries())));
+            try {
+                await fillFormObject(flightReservationModel);
+            } catch (error) {
+                console.log(error)
+            }
+
+            // const form = document.querySelector('#reservationForm');
+            // const formData = new FormData(form);
+            // const myMap = new Map(Object.entries(searchParameters));
+            //
+            // formData.set('myMap', JSON.stringify(Object.fromEntries(myMap.entries())));
 
             fetch('/reservations/booking', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(flightReservationModel)
             })
                 .then(response => {
                     if (!response.ok) {
@@ -268,7 +379,7 @@
         function proceedReservation(flightId) {
             selectedFlights.push(flights.at(flightId - 1));
 
-            if (searchParameters.returnDate.toString().length !== 0 && selectedFlights.length !== 2) {
+            if (searchParameters.flightType == "round-trip" && selectedFlights.length !== 2) {
                 document.getElementById("inbound").className = "";
                 document.getElementById("outbound").className = "d-none";
                 showFlights();
@@ -406,20 +517,20 @@
 
 <div class="container">
     <div class="centered-content mt-5">
-        <div class="shadow p-3 mb-5 bg-light rounded" style="width: 1600px; height: auto; overflow: auto;">
+        <div class="shadow p-3 mb-5 bg-light rounded" style="width: 1800px; height: auto; overflow: auto;">
             <div id="inbound" class="d-none">
                 <h3>INBOUND FLIGHT<i class="fa fa-undo ml-4" aria-hidden="true"></i></h3>
-                <h2 th:text="${searchParameters.get('arrivalCity')} + ' to ' + ${searchParameters.get('departureCity')} + ' | ' + ${searchParameters.get('returnDate')}"></h2>
+                <h2 th:text="${searchParameters.get('arrivalCity')} + ' to ' + ${searchParameters.get('departureCity')} + ' on ' + ${searchParameters.get('returnDate')}"></h2>
             </div>
             <div id="outbound">
                 <h3>OUTBOUND FLIGHT<i class="fa fa-arrow-right ml-4" aria-hidden="true"></i></h3>
-                <h2 th:text="${searchParameters.get('departureCity')} + ' to ' + ${searchParameters.get('arrivalCity')} + ' | ' + ${searchParameters.get('departureDate')}"></h2>
+                <h2 th:text="${searchParameters.get('departureCity')} + ' to ' + ${searchParameters.get('arrivalCity')} + ' on ' + ${searchParameters.get('departureDate')}"></h2>
             </div>
             <div id="payment-page" class="d-none">
                 <h3>FLIGHT INFORMATIONS</h3>
-                <h2 th:text="${searchParameters.get('returnDate').length() != 0} ? ${searchParameters.get('departureCity')} + ' to ' + ${searchParameters.get('arrivalCity')} + ' | ' + ${searchParameters.get('departureDate')}
-                    + ' ~ ' + ${searchParameters.get('arrivalCity')} + ' to ' + ${searchParameters.get('departureCity')} + ' | ' + ${searchParameters.get('returnDate')} :
-                    ${searchParameters.get('departureCity')} + ' to ' + ${searchParameters.get('arrivalCity')} + ' | ' + ${searchParameters.get('departureDate')}"></h2>
+                <h2 th:text="${searchParameters.get('flightType').equals('round-trip')} ? ${searchParameters.get('departureCity')} + ' to ' + ${searchParameters.get('arrivalCity')} + ' | ' + ${searchParameters.get('departureDate')}
+                    + ' ~ ' + ${searchParameters.get('arrivalCity')} + ' to ' + ${searchParameters.get('departureCity')} + ' on ' + ${searchParameters.get('returnDate')} :
+                    ${searchParameters.get('departureCity')} + ' to ' + ${searchParameters.get('arrivalCity')} + ' on ' + ${searchParameters.get('departureDate')}"></h2>
             </div>
             <table class="table table-bordered">
                 <thead style="background-color: #687484">
@@ -438,18 +549,18 @@
                         <div class="flightInfo">
                             <td>
                                 <img class="fs-3" src="https://www.turkishairlines.com/theme/img/logo-top-white-small-current.png" height="35px" style="display: inline-block">
-                                <span th:text="${flight.getFlight_iata()}" class="font-weight-bold fs-5"></span>
+                                <span th:text="${flight.getFlightIataCode()}" class="font-weight-bold fs-5"></span>
                                 <p style="color: #6c7c85" class="font-weight-bold fs-7 mt-4">Turkish Airlines</p>
                             </td>
                             <td>
-                                <h5 th:class="font-weight-bold" style="color: #0e67e4" th:text="${flight.getDep_time().split(' ')[1]}"></h5>
+                                <h5 th:class="font-weight-bold" style="color: #0e67e4" th:text="${flight.getDepartureTime().split(' ')[1]}"></h5>
                                 <div>
                                     <span class="mb-1 d-block font-weight-bold" th:text="${searchParameters.get('departureCity')} + ' (' + ${searchParameters.get('departureAirportIataCode') + ')'}"></span>
                                     <span th:text="${searchParameters.get('departureAirport')}"></span>
                                 </div>
                             </td>
                             <td>
-                                <h5 th:class="font-weight-bold" style="color: #0e67e4" th:text="${flight.getArr_time().split(' ')[1]}"></h5>
+                                <h5 th:class="font-weight-bold" style="color: #0e67e4" th:text="${flight.getArrivalTime().split(' ')[1]}"></h5>
 
                                 <div>
                                     <span class="mb-1 d-block font-weight-bold" th:text="${searchParameters.get('arrivalCity')} + ' (' + ${searchParameters.get('arrivalAirportIataCode') + ')'}"></span>
@@ -477,19 +588,18 @@
                         <div class="flightInfo">
                             <td>
                                 <img class="fs-3" src="https://www.turkishairlines.com/theme/img/logo-top-white-small-current.png" height="35px" style="display: inline-block">
-                                <span th:text="${flight.getFlight_iata()}" class="font-weight-bold fs-5"></span>
+                                <span th:text="${flight.getFlightIataCode()}" class="font-weight-bold fs-5"></span>
                                 <p style="color: #6c7c85" class="font-weight-bold fs-7 mt-4">Turkish Airlines</p>
                             </td>
                             <td>
-                                <h5 th:class="font-weight-bold" style="color: #0e67e4" th:text="${flight.getDep_time().split(' ')[1]}"></h5>
+                                <h5 th:class="font-weight-bold" style="color: #0e67e4" th:text="${flight.getDepartureTime().split(' ')[1]}"></h5>
                                 <div>
-
                                     <span class="mb-1 d-block font-weight-bold" th:text="${searchParameters.get('arrivalCity')} + ' (' + ${searchParameters.get('arrivalAirportIataCode') + ')'}"></span>
                                     <span th:text="${searchParameters.get('arrivalAirport')}"></span>
                                 </div>
                             </td>
                             <td>
-                                <h5 th:class="font-weight-bold" style="color: #0e67e4" th:text="${flight.getArr_time().split(' ')[1]}"></h5>
+                                <h5 th:class="font-weight-bold" style="color: #0e67e4" th:text="${flight.getArrivalTime().split(' ')[1]}"></h5>
                                 <div>
                                     <span class="mb-1 d-block font-weight-bold" th:text="${searchParameters.get('departureCity')} + ' (' + ${searchParameters.get('departureAirportIataCode') + ')'}"></span>
                                     <span th:text="${searchParameters.get('departureAirport')}"></span>
@@ -518,27 +628,27 @@
                 </a>
                 <form id="reservationForm" onsubmit="sendReservationInfos(event)" method="post">
                     <div th:each="i : ${#numbers.sequence(1, searchParameters.get('passengers'))}" class="mt-3">
-                        <h6 class="font-weight-bold" th:text="'Passenger ' + ${i}" style="color: #0e67e4"></h6>
+                        <h6 class="font-weight-bold" th:text="'Passenger ' + ${i}" style="color: #0e67e4; width: 2000px"></h6>
 
                         <div class="form-row mt-2">
                             <div class="form-group col-md-6">
-                                <label class="font-weight-bold" for="name">Name:</label>
-                                <input type="text" id="name" name="name" class="form-control" required>
+                                <label class="font-weight-bold" th:for="name + ${i}">Name:</label>
+                                <input type="text" th:id="name + ${i}" name="name" class="form-control" required>
                             </div>
                             <div class="form-group col-md-6">
-                                <label class="font-weight-bold" for="surname">Surname:</label>
-                                <input type="text" id="surname" name="surname" class="form-control" required>
+                                <label class="font-weight-bold" th:for="surname + ${i}">Surname:</label>
+                                <input type="text" th:id="surname  + ${i}" name="surname" class="form-control" required>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group col-md-6">
-                                <label class="font-weight-bold" for="dateOfBirth">Date of Birth:</label>
-                                <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control" required>
+                                <label class="font-weight-bold" th:for="dateOfBirth + ${i}">Date of Birth:</label>
+                                <input type="date" th:id="dateOfBirth + ${i}" name="dateOfBirth" class="form-control" required>
                             </div>
                             <div class=" form-group col-md-6">
-                                <label class="font-weight-bold" for="gender">Gender:</label>
-                                <select id="gender" name="gender" class="form-control" required>
+                                <label class="font-weight-bold" th:for="gender + ${i}">Gender:</label>
+                                <select th:id="gender + ${i}" name="gender" class="form-control" required>
                                     <option value=""></option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
@@ -549,8 +659,8 @@
 
                         <div class="form-row">
                             <div class="form-group col-md-12">
-                                <label class="font-weight-bold" for="phoneNumber">Phone Number:</label>
-                                <input type="tel" maxlength="14" onkeyup="formatPhone(this)" id="phoneNumber" name="phoneNumber" pattern="\(\d{3}\) \d{3}-\d{4}" class="form-control" placeholder="(123) 456-7890" required>
+                                <label class="font-weight-bold" th:for="phoneNumber + ${i}">Phone Number:</label>
+                                <input type="tel" maxlength="14" onkeyup="formatPhone(this)" th:id="phoneNumber + ${i}" name="phoneNumber" pattern="\(\d{3}\) \d{3}-\d{4}" class="form-control" placeholder="(123) 456-7890" required>
                             </div>
                         </div>
                     </div>
@@ -561,11 +671,13 @@
                         </div>
                     </div>
                     <input type="text" id="flightDetails" name="FlightDetails" style="display: none">
-                    <div th:class="${searchParameters.get('flightType') == 'round-trip'} ? 'final-reservation form-row justify-content-start p-3 ml-4'
-                        : 'final-reservation form-row justify-content-end p-3 ml-4'" style="background-color: #282c3c">
-                        <div class="d-lg-flex flight-detail-bar mr-xl-auto">
-                            <div th:class="${searchParameters.get('flightType') == 'round-trip'}  ? 'col-lg-6': 'col-lg-12'">
-                                <div class="h5 mt-0" style="font-size: 14px">Departure</div>
+                    <div th:class="${searchParameters.get('flightType') == 'round-trip'} ? 'mt-5 row col-12 d-flex align-items-center final-reservation justify-content-start p-3 ml-0'
+                        : 'mt-5 row col-12 d-flex align-items-center final-reservation justify-content-end p-3 ml-0'" style="background-color: #282c3c">
+                        <div class="d-flex flight-detail-bar col-4">
+                            <div th:class="${searchParameters.get('flightType') == 'round-trip'}  ? 'col-6': 'col-12'">
+                                <div class="row">
+                                    <div class="h5 mt-0" style="font-size: 14px">Departure</div>
+                                </div>
                                 <span class="float-start" th:text="${searchParameters.get('departureAirportIataCode')} + ' - ' + ${searchParameters.get('arrivalAirportIataCode')}"></span>
                                 <em class="fa fa-circle float-start px-1 mt-1" style="font-size: 7px"></em>
                                 <span class="float-start pr-2" th:text="${searchParameters.get('departureDate')}"></span>
@@ -591,7 +703,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card-selection col-lg-3" style="padding-left: 27px">
+                        <div class="card-selection col-lg-3 ml-3" style="padding-left: 27px">
                             <label for="select-card" style="font-size: 14px; color: wheat">Select a payment card</label>
                             <th:block th:if="${cards.isEmpty()}">
                                 <div class="text-center">
@@ -602,7 +714,7 @@
                                 <option th:each="card : ${cards}" th:value="${card.getId()}" th:text="${card.getName()} + ' - ending with ' + ${card.getNumber().substring(12)}"></option>
                             </select>
                         </div>
-                        <div th:class="${searchParameters.get('flightType') == 'one-way'} ? 'pe-15 pe-0-web ws-nowrap ml-5 mt-2' : 'pe-15 pe-0-web ws-nowrap ml-2 mt-2'">
+                        <div th:class="${searchParameters.get('flightType') == 'one-way'} ? 'col-2 pe-15 ml-5 mt-2' : 'col-2 pe-15 ml-2 mt-2'">
                             <div class="price-count mt-15">
                                 <div class="lh-3" style="font-size: 12px">Total price for 1 passenger</div>
                                 <span class="fs-4 pl-2" id="total"></span>

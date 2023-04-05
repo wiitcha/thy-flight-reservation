@@ -24,9 +24,11 @@ public class Reservation {
     @Column(name = "reservation_code")
     private String reservationCode;
 
+    @Column(name = "reservation_type")
+    private String reservationType;
+
     @Column(name = "date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
+    private String date;
 
     @Column(name = "hasExtraLuggage")
     private boolean hasExtraLuggage;

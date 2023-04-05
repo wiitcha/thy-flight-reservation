@@ -2,10 +2,12 @@ package com.iau.flight_management.service.impl;
 
 import com.iau.flight_management.model.entity.Member;
 import com.iau.flight_management.repository.MemberRepository;
+import com.iau.flight_management.security.config.JwtService;
 import com.iau.flight_management.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -13,6 +15,7 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final JwtService jwtService;
     @Override
     public boolean existsByEmail(String email) {
         return memberRepository.existsByEmail(email);
@@ -23,6 +26,14 @@ public class MemberServiceImpl implements MemberService {
     }
     @Override
     public Optional<Member> findByEmail(String email) {
+        return memberRepository.findByEmail(email);
+    }
+
+    @Override
+    public Optional<Member> extractUser(HttpServletRequest request) {
+        String token = request.getSession().getAttribute("Authorization").toString();
+        String email = jwtService.extractUsername(token);
+
         return memberRepository.findByEmail(email);
     }
 

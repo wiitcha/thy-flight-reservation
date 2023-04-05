@@ -12,7 +12,7 @@ public class PublicController {
 
     @GetMapping(value = {"/", "/login"})
     public String viewLoginPage() {
-        return "login/loginPage";
+        return "/login/loginPage";
     }
 
     @GetMapping("/register")

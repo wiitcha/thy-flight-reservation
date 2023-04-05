@@ -17,9 +17,30 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-            crossorigin="anonymous"></script>
+    <script th:inline="javascript">
+
+
+
+        function showReservationDetail(id) {
+            let reservationDetail = document.getElementById('reservation-detail-' + id);
+            reservationDetail.className = "reservation-summary";
+        }
+        function hideReservationDetail(id) {
+            let reservationDetail = document.getElementById('reservation-detail-' + id);
+            reservationDetail.className = "d-none reservation-summary";
+        }
+
+        function manageVisibilityOfReservation(id) {
+            let reservation = document.getElementById('reservation-detail-' + id);
+
+            if (reservation.className === 'd-none reservation-summary') {
+                showReservationDetail(id);
+            } else {
+                hideReservationDetail(id);
+            }
+        }
+
+    </script>
     <style>
 
         * {
@@ -27,12 +48,14 @@
             font-family: 'Roboto', sans-serif;
         }
 
+        body {}
+
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background-color: #232b38;
-            padding: 20px;
+            padding: 10px 20px;
             box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
         }
 
@@ -78,8 +101,6 @@
             justify-content: center;
             align-items: center;
             border-radius: 5px;
-
-
         }
 
         .flights-container {
@@ -202,8 +223,12 @@
             color: #F84659FF;
         }
 
-
-
+        .reservation-summary {
+            overflow: hidden;
+            transition-property: height;
+            transition-duration: 1s;
+            scroll-behavior: smooth;
+        }
 
     </style>
 </head>
@@ -226,26 +251,29 @@
         <em>Your booking has been successfully completed!</em>
     </div>
 </div>
-<div class="content">
-    <div class="flights-container d-flex align-items-center justify-content-start col-lg-8">
+<div class="content d-flex flex-column justify-content-start">
+    <div class="col-8 mt-4">
+        <h1 class="font-weight-light" style="font-size: 64px">RESERVATIONS</h1>
+    </div>
+    <div th:each="reservation : ${reservations}" class="flights-container d-flex align-items-center flex-column justify-content-start mt-4 col-lg-8">
         <div class="flight-demo row d-flex align-items- justify-content-start flex-column col-lg-12">
             <div class="flights-header">
                 <div class="row justify-content-between p-3">
                     <div class="col-6 d-flex align-content-start justify-content-center">
                         <div class="col-1"><span class="fa fa-check-circle" aria-hidden="true"></span></div>
-                        <div class="col-11"><span>ROUND TRIP | 02-06-2023</span></div>
+                        <div th:text="${#strings.capitalize(reservation.getReservationType())} + ' | ' + ${reservation.getDate()}" class="col-11"><span>ROUND TRIP | 02-06-2023</span></div>
                     </div>
-                    <div class="col-6"><span class="pull-right"># 3511515</span></div>
+                    <div class="col-6"><span th:text="'#' + ${reservation.getId()}" class="pull-right"></span></div>
                 </div>
             </div>
             <div class="row p-3 mx-0 col-12">
-                <div class="flights p-3 mt-3 col-5">
+                <div th:class=" ${reservation.getFlights().size() > 1} ? 'flights p-3 mt-3 col-5' : 'flights p-3 mt-3 col-10'">
                     <div class="row">
                         <div class="row align-items-center">
                             <div class="col-sm-2 text-center justify-content-start">
-                                <p class="font-weight-bold">02:20</p>
-                                <h5>IST</h5>
-                                <p>Istanbul</p>
+                                <p th:text="${reservation.getFlights().get(0).getDepartureTime()}" class="font-weight-bold">02:20</p>
+                                <h5 th:text="${reservation.getFlights().get(0).getDepartureAirportIataCode()}">IST</h5>
+                                <p th:text="${reservation.getFlights().get(0).getDepartureCity()}">Istanbul</p>
                             </div>
                             <div class="col-sm-8 d-flex flex-column align-items-center justify-content-center mb-2">
                                 <span class=" mb-2">Direct</span>
@@ -256,20 +284,20 @@
                                 <img src="https://www.turkishairlines.com/theme/img/logo-top-white-small-current.png" style="height: 24px">
                             </div>
                             <div class="col-sm-2 text-center justify-content-start">
-                                <p class="font-weight-bold">02:20</p>
-                                <h5>FRA</h5>
-                                <p>Frankfurt </p>
+                                <p th:text="${reservation.getFlights().get(0).getArrivalTime()}" class="font-weight-bold">02:20</p>
+                                <h5 th:text="${reservation.getFlights().get(0).getArrivalAirportIataCode()}">FRA</h5>
+                                <p th:text="${reservation.getFlights().get(0).getArrivalCity()}">Frankfurt </p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="flights return-flight p-3 mt-3 col-5">
+                <div th:if="${reservation.getFlights().size() > 1}" class="flights return-flight p-3 mt-3 col-5">
                     <div class="row">
                         <div class="row align-items-center">
                             <div class="col-sm-2 text-center justify-content-start">
-                                <p class="font-weight-bold">02:20</p>
-                                <h5>IST</h5>
-                                <p>Istanbul</p>
+                                <p th:text="${reservation.getFlights().get(1).getDepartureTime()}" class="font-weight-bold">02:20</p>
+                                <h5 th:text="${reservation.getFlights().get(1).getDepartureAirportIataCode()}">IST</h5>
+                                <p th:text="${reservation.getFlights().get(1).getDepartureCity()}">Istanbul</p>
                             </div>
                             <div class="col-sm-8 d-flex flex-column align-items-center justify-content-center mb-2">
                                 <span class=" mb-2">Direct</span>
@@ -280,9 +308,9 @@
                                 <img src="https://www.turkishairlines.com/theme/img/logo-top-white-small-current.png" style="height: 24px">
                             </div>
                             <div class="col-sm-2 text-center justify-content-start">
-                                <p class="font-weight-bold">02:20</p>
-                                <h5>FRA</h5>
-                                <p>Frankfurt </p>
+                                <p th:text="${reservation.getFlights().get(1).getArrivalTime()}" class="font-weight-bold">02:20</p>
+                                <h5 th:text="${reservation.getFlights().get(1).getArrivalAirportIataCode()}">FRA</h5>
+                                <p th:text="${reservation.getFlights().get(1).getArrivalCity()}">Frankfurt </p>
                             </div>
                         </div>
                     </div>
@@ -290,149 +318,190 @@
                 <div class="flight-details-button col-2 d-flex justify-content-center align-items-center">
                     <div class="icon-container text-center h-50 ">
                         <p class="font-weight-bold">Booking details</p>
-                        <span class="fa fa-angle-down font-weight-bold icon" style="color: #6c7c84"></span>
+                        <span th:onclick="'manageVisibilityOfReservation(\'' + ${reservation.getId()} + '\')'" class="fa fa-angle-down font-weight-bold icon" style="color: #6c7c84"></span>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="flight-details row d-flex justify-content-start align-items-center col-lg-12">
-            <div class="summary p-3">
-                <div class="row">
-                    <div class="col-6 ">
-                        <h2 class="font-weight-lighter" style="font-size: 36px">Summary</h2>
+        <div  th:id="'reservation-detail-' + ${reservation.getId()}" class="d-none reservation-summary">
+            <div class="flight-details row d-flex justify-content-start align-items-center col-lg-12 ">
+                <div class="summary p-3">
+                    <div class="row">
+                        <div class="col-6 ">
+                            <h2 class="font-weight-lighter" style="font-size: 36px">Summary</h2>
                         </div>
-                    <div class="col-6 d-flex flex-column align-content-start justify-content-end text-center">
-                        <div class="row align-self-end col-md-5">
-                            <h2 class="flight-type rounded-2" style="font-size: 24px"># 156156</h2>
+                        <div class="col-6 d-flex flex-column align-content-start justify-content-end text-center">
+                            <div class="row align-self-end col-md-5">
+                                <h2 th:text="${reservation.getReservationCode()}" class="flight-type rounded-2" style="font-size: 24px"># 156156</h2>
+                            </div>
+                            <div class="row align-self-end col-5 color">
+                                <p>Booking reference</p>
+                            </div>
                         </div>
-                        <div class="row align-self-end col-5">
-                            <p>Booking reference</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <h5 th:text="'Reservation owner: ' + ${reservation.getMember().getName()} + ' ' + ${reservation.getMember().getSurname()}" class="font-weight-light">Reservation owner: Emir Güler</h5>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-12">
-                        <h5 class="font-weight-light">Reservation owner: Emir Güler</h5>
+                <div class="payment fs-4 mt-2">
+                    <div class="col-12 p-0">
+                        <div class="col-6 p-0">
+                            <span th:text="${reservation.getPayment().getCard().getType()} + ' **********' + ${reservation.getPayment().getCard().getNumber().substring(14)}" class="col-5">VISA **********12</span>
+                            <span class="fa fa-credit-card-alt col-1 text-center" aria-hidden="true"></span>
+                            <span th:text="${reservation.getPayment().getCard().getName()}" class="col-5">İş Bankasi</span>
+                        </div>
+                        <div class="col-6"></div>
                     </div>
                 </div>
-            </div>
-            <div class="payment fs-4">
-                <div class="col-12 p-0">
-                    <div class="col-6 p-0">
-                        <span class="col-5">VISA **********12</span>
-                        <span class="fa fa-credit-card-alt col-1 text-center" aria-hidden="true"></span>
-                        <span class="col-5">İş Bankasi</span>
-                    </div>
-                    <div class="col-6"></div>
+                <div class="col-12 mb-4">
+                    <hr>
                 </div>
-            </div>
-            <div class="col-12 mb-4">
+                <div class="outbound-trip">
+                    <div class="outbound-header">
+                        <div class="row">
+                            <div class="col-12">
+                                <h5 class="flight-type">OUTBOUND TRIP</h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <h3 th:text="${reservation.getFlights().get(0).getDepartureCity()} + ' to ' + ${reservation.getFlights().get(0).getArrivalCity()}
+                                    + ' on ' + ${reservation.getFlights().get(0).getDate()}"></h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="outbound-flight-table">
+                        <div class="row">
+                            <div class="col-12">
+                                <table class="table table-bordered">
+                                    <thead style="background-color: #687484; color: white">
+                                    <tr>
+                                        <th style="width: 25%">FLIGHT</th>
+                                        <th style="width: 25%">FROM</th>
+                                        <th style="width: 25%">TO</th>
+                                        <th style="width: 25%">DURATION</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                            <img class="fs-3" src="https://www.turkishairlines.com/theme/img/logo-top-white-small-current.png" height="35px" style="display: inline-block">
+                                            <span th:text="${reservation.flights.get(0).getFlightIataCode()}" class="font-weight-bold fs-5"></span>
+                                            <p style="color: #6c7c85" class="font-weight-bold fs-7 mt-4">Turkish Airlines</p>
+                                        </td>
+                                        <td>
+                                            <h5 th:class="font-weight-bold" style="color: #0e67e4" th:text="${reservation.flights.get(0).getDepartureTime()}"></h5>
+                                            <div>
+                                                <span class="mb-1 d-block font-weight-bold" th:text="${reservation.flights.get(0).departureCity} + ' (' + ${reservation.flights.get(0).departureAirportIataCode + ')'}"></span>
+                                                <span th:text="${reservation.flights.get(0).departureAirport}"></span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <h5 th:class="font-weight-bold" style="color: #0e67e4" th:text="${reservation.flights.get(0).getArrivalTime()}"></h5>
+                                            <div>
+                                                <span class="mb-1 d-block font-weight-bold" th:text="${reservation.flights.get(0).arrivalCity} + ' (' + ${reservation.flights.get(0).arrivalAirportIataCode + ')'}"></span>
+                                                <span th:text="${reservation.flights.get(0).arrivalAirport}"></span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <h4 class="font-weight-bold mt-4 text-center" th:text="${reservation.flights.get(0).duration}"></h4>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <th:block th:if="${reservation.getFlights().size() > 1}">
+                    <div class="inbound-trip mt-2">
+                        <div class="inbound-header">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5 class="flight-type">INBOUND TRIP</h5>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <h3 th:text="${reservation.getFlights().get(1).getDepartureCity()} + ' to ' + ${reservation.getFlights().get(1).getArrivalCity()}
+                                    + ' on ' + ${reservation.getFlights().get(1).getDate()}"></h3>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="inbound-flight-table">
+                        <div class="row">
+                            <div class="col-12">
+                                <table class="table table-bordered">
+                                    <thead style="background-color: #687484; color: white">
+                                    <tr>
+                                        <th style="width: 25%">FLIGHT</th>
+                                        <th style="width: 25%">FROM</th>
+                                        <th style="width: 25%">TO</th>
+                                        <th style="width: 25%">DURATION</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                            <img class="fs-3" src="https://www.turkishairlines.com/theme/img/logo-top-white-small-current.png" height="35px" style="display: inline-block">
+                                            <span th:text="${reservation.flights.get(1).getFlightIataCode()}" class="font-weight-bold fs-5"></span>
+                                            <p style="color: #6c7c85" class="font-weight-bold fs-7 mt-4">Turkish Airlines</p>
+                                        </td>
+                                        <td>
+                                            <h5 th:class="font-weight-bold" style="color: #0e67e4" th:text="${reservation.flights.get(1).getDepartureTime()}"></h5>
+                                            <div>
+                                                <span class="mb-1 d-block font-weight-bold" th:text="${reservation.flights.get(1).departureCity} + ' (' + ${reservation.flights.get(1).departureAirportIataCode + ')'}"></span>
+                                                <span th:text="${reservation.flights.get(1).departureAirport}"></span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <h5 th:class="font-weight-bold" style="color: #0e67e4" th:text="${reservation.flights.get(1).getArrivalTime()}"></h5>
+                                            <div>
+                                                <span class="mb-1 d-block font-weight-bold" th:text="${reservation.flights.get(1).arrivalCity} + ' (' + ${reservation.flights.get(1).arrivalAirportIataCode + ')'}"></span>
+                                                <span th:text="${reservation.flights.get(1).arrivalAirport}"></span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <h4 class="font-weight-bold mt-4 text-center" th:text="${reservation.flights.get(1).duration}"></h4>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+                <div class="total mt-4 mb-4">
+                    <div class="row">
+                        <div class="col-6 mb-0">
+                            <h1 class="font-weight-normal mt-1" style="font-size: 48px">Total</h1>
+                        </div>
+                        <div class="col-6 d-flex justify-content-end align-content-start">
+                            <h1 class="mr-2">TRY </h1>
+                            <h1 th:text="${reservation.getPayment().getTotal()}" class="mr-1"><i class="fa fa-try" aria-hidden="true"></i></h1>
+
+                            <!--                        <span  class="position-absolute" style="right: 0; top: -5px;">86/</span>-->
+                        </div>
+                    </div>
+                </div>
                 <hr>
-            </div>
-
-            <div class="outbound-trip">
-                <div class="outbound-header">
-                    <div class="row">
-                        <div class="col-12">
-                            <h5 class="flight-type">OUTBOUND TRIP</h5>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <h3>Istanbul to Manchester on Friday 16 December</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="outbound-flight-table">
+                <div class="passengers">
                     <div class="row">
                         <div class="col-12">
                             <table class="table table-bordered">
-                                <thead style="background-color: #687484; color: white">
+                                <thead style="background-color: #404c5c; color: white">
                                 <tr>
-                                    <th style="width: 25%">FLIGHT</th>
-                                    <th style="width: 25%">FROM</th>
-                                    <th style="width: 25%">TO</th>
-                                    <th style="width: 25%">DURATION</th>
+                                    <th style="width: 30%">PASSENGER</th>
+                                    <th style="width: 25%">DATE OF BIRTH</th>
+                                    <th style="width: 25%">PHONE NUMBER</th>
+                                    <th style="width: 20%">ID</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>THY</td>
-                                    <td>ISTANBUL</td>
-                                    <td>ANKARA</td>
-                                    <td>2h</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="inbound-trip mt-2">
-                <div class="inbound-header">
-                    <div class="row">
-                        <div class="col-12">
-                            <h5 class="flight-type">INBOUND TRIP</h5>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <h3>Manchester to Istanbul on Friday 18 December</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="inbound-flight-table">
-                    <div class="row">
-                        <div class="col-12">
-                            <table class="table table-bordered">
-                                <thead style="background-color: #687484; color: white">
-                                <tr>
-                                    <th style="width: 25%">FLIGHT</th>
-                                    <th style="width: 25%">FROM</th>
-                                    <th style="width: 25%">TO</th>
-                                    <th style="width: 25%">DURATION</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>THY</td>
-                                    <td>ISTANBUL</td>
-                                    <td>ANKARA</td>
-                                    <td>2h</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="total mt-4 mb-4">
-                <div class="row">
-                    <div class="col-6 mb-0">
-                        <h1 class="font-weight-normal mt-1" style="font-size: 48px">Total</h1>
-                    </div>
-                    <div class="col-6 d-flex justify-content-end align-content-start">
-                        <h2 class="mr-1"><i class="fa fa-try" aria-hidden="true"></i></h2>
-                        <h1 class="mr-1" style="font-size: 60px">2568</h1>
-                        <span class="position-absolute" style="right: 0; top: -5px;">86</span>
-                    </div>
-
-                </div>
-            </div>
-            <hr>
-            <div class="passengers">
-                <div class="row">
-                    <div class="col-12">
-                        <table class="table table-bordered">
-                            <thead style="background-color: #404c5c; color: white">
-                            <tr>
-                                <th style="width: 30%">PASSENGER</th>
-                                <th style="width: 25%">DATE OF BIRTH</th>
-                                <th style="width: 25%">PHONE NUMBER</th>
-                                <th style="width: 20%">ID</th>
-                            </tr>
-                            </thead>
-                            <tbody>
                                 <tr>
                                     <td class="d-flex justify-content-center align-items-start">
                                         <div class="col-4">
@@ -474,14 +543,16 @@
                                         </div>
                                     </td>
                                 </tr>
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
 
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 </body>
 </html>

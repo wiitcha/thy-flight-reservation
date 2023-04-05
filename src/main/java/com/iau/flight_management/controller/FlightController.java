@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class FlightController {
     public String searchFlights(Model model,
                                 @ModelAttribute("Authorization") String token,
                                 @RequestBody MultiValueMap<String, String> formData,
-                                HttpServletRequest request) throws IOException, InterruptedException {
+                                HttpServletRequest request) throws IOException, InterruptedException, ParseException {
 
         String email = jwtService.extractUsername(token);
 
@@ -52,6 +53,4 @@ public class FlightController {
             return SECURITY_LOGOUT;
         }
     }
-
-
 }

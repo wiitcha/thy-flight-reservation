@@ -1,18 +1,19 @@
 package com.iau.flight_management.model.dto;
 
-import com.iau.flight_management.model.entity.Card;
-import com.iau.flight_management.model.entity.Reservation;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentDTO {
-
     private Long id;
-    private double total;
-    private Card card;
-    private Reservation reservation;
+    private BigDecimal total;
+    private CardDTO card;
+    private ReservationDTO reservation;
 }

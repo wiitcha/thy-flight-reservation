@@ -17,21 +17,23 @@ public class PassengerServiceImpl implements PassengerService {
     private final PassengerRepository passengerRepository;
 
     @Override
-    public List<Passenger> savePassengers(PassengerDTO passengers) {
-        List<Passenger> passengerList = new ArrayList<>();
+    public List<Passenger> savePassengers(List<PassengerDTO> passengerDTOS) {
 
-        for (int i = 0; i < passengers.getName().length; i++) {
+        List<Passenger> passengers = new ArrayList<>();
+
+        for (PassengerDTO passengerDTO : passengerDTOS) {
             Passenger passenger = Passenger.builder()
-                    .name(passengers.getName()[i])
-                    .surname(passengers.getSurname()[i])
-                    .dateOfBirth(passengers.getDateOfBirth()[i])
-                    .gender(passengers.getGender()[i])
-                    .phoneNumber(passengers.getPhoneNumber()[i])
+                    .name(passengerDTO.getName())
+                    .surname(passengerDTO.getSurname())
+                    .dateOfBirth(passengerDTO.getDateOfBirth())
+                    .gender(passengerDTO.getGender())
+                    .phoneNumber(passengerDTO.getPhoneNumber())
                     .build();
 
             passengerRepository.save(passenger);
-            passengerList.add(passenger);
+            passengers.add(passenger);
         }
-        return passengerList;
+
+        return passengers;
     }
 }

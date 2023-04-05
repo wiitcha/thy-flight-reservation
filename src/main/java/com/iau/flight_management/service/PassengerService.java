@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface PassengerService {
 
-    List<Passenger> savePassengers(PassengerDTO passengers);
+    List<Passenger> savePassengers(List<PassengerDTO> passengerDTOS);
 }
