@@ -19,4 +19,13 @@ public class PassengerDTO {
     private String gender;
     private String phoneNumber;
     private List<ReservationDTO> reservations;
+
+    public PassengerDTO(Long id, String name, String surname, String dateOfBirth, String gender, String phoneNumber) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.dateOfBirth = dateOfBirth;
+        this.gender = gender;
+        this.phoneNumber = phoneNumber;
+    }
 }

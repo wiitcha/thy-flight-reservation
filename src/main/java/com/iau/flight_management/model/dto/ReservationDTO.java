@@ -19,4 +19,11 @@ public class ReservationDTO {
     private PaymentDTO payment;
     private List<FlightDTO> flights;
     private List<PassengerDTO> passengers;
+
+    public ReservationDTO(Long id, String reservationCode, String reservationType, String date) {
+        this.id = id;
+        this.reservationCode = reservationCode;
+        this.reservationType = reservationType;
+        this.date = date;
+    }
 }

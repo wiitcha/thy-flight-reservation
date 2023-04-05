@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.sql.Time;
 import java.util.Date;
 import java.util.List;
@@ -57,7 +58,7 @@ public class Flight {
     private String duration;
 
     @Column(name = "price")
-    private double price;
+    private BigDecimal price;
 
     @ManyToMany(mappedBy = "flights", fetch = FetchType.LAZY)
     private List<Reservation> reservations;

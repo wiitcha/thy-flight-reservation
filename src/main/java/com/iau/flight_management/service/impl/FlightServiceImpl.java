@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -86,7 +87,8 @@ public class FlightServiceImpl implements FlightService {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             FlightDTO flight = objectMapper.readValue(jsonObject.toString(), FlightDTO.class);
 
-            int price = Integer.parseInt(flight.getDuration())  * 13;
+            BigDecimal price = BigDecimal.ZERO;
+            price = price.add(BigDecimal.valueOf(Integer.parseInt(flight.getDuration()))).multiply(BigDecimal.valueOf(13));
             flight.setPrice(price);
             flight.setId((long) (i + 1));
             flight.setDuration(convertDurationToHours(Integer.parseInt(flight.getDuration())));

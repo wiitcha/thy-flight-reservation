@@ -16,4 +16,10 @@ public class PaymentDTO {
     private BigDecimal total;
     private CardDTO card;
     private ReservationDTO reservation;
+
+    public PaymentDTO(Long id, BigDecimal total, CardDTO card) {
+        this.id = id;
+        this.total = total;
+        this.card = card;
+    }
 }

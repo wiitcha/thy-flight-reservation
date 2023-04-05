@@ -23,7 +23,7 @@ public class PaymentServiceImpl implements PaymentService {
     public BigDecimal calculateTotal(List<FlightDTO> flights, double passengerCount) {
         BigDecimal total = BigDecimal.ZERO;
         for (FlightDTO flight : flights) {
-            total = total.add(BigDecimal.valueOf(flight.getPrice()));
+            total = total.add(flight.getPrice());
         }
         total = total.add(total.multiply(BigDecimal.valueOf(0.18)));
 

@@ -26,6 +26,13 @@ public class MemberDTO implements UserDetails {
     private List<RoleDTO> roles;
     private List<CardDTO> cards;
 
+    public MemberDTO(Long id, String name, String surname, List<RoleDTO> roles) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.roles = roles;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(roles.toString()));
