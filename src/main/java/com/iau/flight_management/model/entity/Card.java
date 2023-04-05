@@ -3,7 +3,6 @@ package com.iau.flight_management.model.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.List;
 
 @Getter

@@ -18,9 +18,9 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
-@SessionAttributes("Authorization")
 @Controller
 @RequestMapping("/flights")
 public class FlightController {
@@ -33,14 +33,13 @@ public class FlightController {
 
     @PostMapping
     public String searchFlights(Model model,
-                                @ModelAttribute("Authorization") String token,
                                 @RequestBody MultiValueMap<String, String> formData,
                                 HttpServletRequest request) throws IOException, InterruptedException, ParseException {
 
-        String email = jwtService.extractUsername(token);
+        Optional<Member> optionalMember = memberService.extractUser(request);
 
-        if (memberService.existsByEmail(email)) {
-            Member member = memberService.findByEmail(email).get();
+        if (optionalMember.isPresent()) {
+            Member member = optionalMember.get();
 
             List<Card> cards = cardService.findAllCardsOfMember(member);
             model.addAttribute("cards", cards);

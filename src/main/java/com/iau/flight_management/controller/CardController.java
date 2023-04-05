@@ -57,13 +57,12 @@ public class CardController {
     }
 
     @GetMapping("/delete")
-    public String deleteCard(@ModelAttribute("Authorization") String token,
+    public String deleteCard(HttpServletRequest request,
                              @RequestParam(value = "id") Long cardId) {
+        Optional<Member> optionalMember = memberService.extractUser(request);
 
-        String email = jwtService.extractUsername(token);
-
-        if (memberService.existsByEmail(email)) {
-            Member member = memberService.findByEmail(email).get();
+        if (optionalMember.isPresent()) {
+            Member member = optionalMember.get();
 
             return cardService.deleteCard(cardId, member);
         }

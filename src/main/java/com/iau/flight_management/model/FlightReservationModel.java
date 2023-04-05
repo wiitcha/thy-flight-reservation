@@ -2,7 +2,6 @@ package com.iau.flight_management.model;
 
 import com.iau.flight_management.model.dto.FlightDTO;
 import com.iau.flight_management.model.dto.PassengerDTO;
-import com.iau.flight_management.model.dto.ReservationDTO;
 import lombok.*;
 
 import java.util.List;
