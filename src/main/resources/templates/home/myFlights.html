@@ -22,7 +22,6 @@
         let reservations = [[${reservations}]];
         /*]]>*/
 
-
         function showReservationDetail(id) {
             let reservationDetail = document.getElementById('reservation-detail-' + id);
             reservationDetail.className = "reservation-summary";
@@ -33,13 +32,21 @@
         }
 
         function manageVisibilityOfReservation(id) {
-            let reservation = document.getElementById('reservation-detail-' + id);
+            let selectedReservation = document.getElementById('reservation-detail-' + id);
 
-            if (reservation.className === 'd-none reservation-summary') {
+            if (selectedReservation.className === 'd-none reservation-summary') {
+                hideAllReservations();
                 showReservationDetail(id);
             } else {
-                hideReservationDetail(id);
+                hideAllReservations();
             }
+        }
+
+        function hideAllReservations() {
+            reservations.forEach(reservation => {
+                let res = document.getElementById('reservation-detail-' + reservation.id);
+                res.className = 'd-none reservation-summary';
+            });
         }
 
     </script>

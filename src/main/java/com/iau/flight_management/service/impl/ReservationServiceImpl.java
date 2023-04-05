@@ -1,9 +1,11 @@
 package com.iau.flight_management.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.iau.flight_management.mapper.ReservationMapper;
 import com.iau.flight_management.model.FlightReservationModel;
 import com.iau.flight_management.model.dto.FlightDTO;
 import com.iau.flight_management.model.dto.PassengerDTO;
+import com.iau.flight_management.model.dto.ReservationDTO;
 import com.iau.flight_management.model.entity.*;
 import com.iau.flight_management.repository.ReservationRepository;
 import com.iau.flight_management.service.*;
@@ -21,6 +23,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final PaymentService paymentService;
     private final PassengerService passengerService;
     private final FlightService flightService;
+    private final ReservationMapper reservationMapper;
 
     @Override
     public String bookReservation(Member member, FlightReservationModel flightReservationModel) throws JsonProcessingException {
@@ -83,5 +86,15 @@ public class ReservationServiceImpl implements ReservationService {
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy", Locale.ENGLISH);
         return formatter.format(date);
+    }
+
+    @Override
+    public List<ReservationDTO> convertReservationsToDto(List<Reservation> reservations) {
+        List<ReservationDTO> reservationDTOS = new ArrayList<>();
+
+        for (Reservation reservation: reservations) {
+            reservationDTOS.add(reservationMapper.toDto(reservation));
+        }
+        return reservationDTOS;
     }
 }
