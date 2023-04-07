@@ -2,7 +2,6 @@ package com.iau.flight_management.controller;
 
 import com.iau.flight_management.model.entity.Card;
 import com.iau.flight_management.model.entity.Member;
-import com.iau.flight_management.security.config.JwtService;
 import com.iau.flight_management.service.CardService;
 import com.iau.flight_management.service.FlightService;
 import com.iau.flight_management.service.MemberService;
@@ -26,7 +25,6 @@ import java.util.Optional;
 public class FlightController {
 
     private final FlightService flightService;
-    private final JwtService jwtService;
     private final MemberService memberService;
     private final CardService cardService;
     private static final String SECURITY_LOGOUT = "redirect:/home?logout";

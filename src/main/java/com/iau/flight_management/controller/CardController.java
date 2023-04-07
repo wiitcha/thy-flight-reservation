@@ -28,9 +28,7 @@ public class CardController {
                               HttpServletRequest request,
                               Model model) {
 
-        String token = request.getSession().getAttribute("Authorization").toString();
-        String email = jwtService.extractUsername(token);
-        Optional<Member> member = memberService.findByEmail(email);
+        Optional<Member> member = memberService.extractUser(request);
 
         if (member.isPresent()) {
             if (cardId != null) {

@@ -36,7 +36,6 @@ public class AuthenticationController {
             request.getSession().setAttribute("Authorization", token);
             return "redirect:/home";
         }
-
     }
 
     @PostMapping("/register")

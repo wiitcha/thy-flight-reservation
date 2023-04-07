@@ -18,7 +18,6 @@ public class ReservationMapper {
 
     private final FlightMapper flightMapper;
     private final PassengerMapper passengerMapper;
-
     private final PaymentMapper paymentMapper;
     private final MemberMapper memberMapper;
 

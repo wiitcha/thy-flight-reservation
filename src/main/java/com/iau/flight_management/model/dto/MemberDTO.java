@@ -14,7 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberDTO implements UserDetails {
-    public List<ReservationDTO> reservations;
     private Long id;
     private String name;
     private String surname;
@@ -25,6 +24,7 @@ public class MemberDTO implements UserDetails {
     private String address;
     private List<RoleDTO> roles;
     private List<CardDTO> cards;
+    private List<ReservationDTO> reservations;
 
     public MemberDTO(Long id, String name, String surname, List<RoleDTO> roles) {
         this.id = id;
