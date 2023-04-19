@@ -36,6 +36,19 @@ public class ReservationController {
         return "home/myFlights";
     }
 
+    @PostMapping
+    public String cancelReservation(@RequestParam(name = "ref") String referenceNumber, HttpServletRequest request) {
+        Optional<Member> memberOptional = memberService.extractUser(request);
+
+        if (memberOptional.isPresent()) {
+            Member member = memberOptional.get();
+
+            return reservationService.cancelReservation(referenceNumber, member);
+        } else {
+            return SECURITY_LOGOUT;
+        }
+    }
+
     @PostMapping("/booking")
     public String bookReservation(@RequestBody FlightReservationModel flightReservationModel, HttpServletRequest request
     ) throws JsonProcessingException {
@@ -48,4 +61,5 @@ public class ReservationController {
         }
         return SECURITY_LOGOUT;
     }
+
 }

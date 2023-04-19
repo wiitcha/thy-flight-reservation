@@ -419,7 +419,6 @@
         function showDemoFlightTimes() {
             document.getElementById("departure-dep-time").innerText = selectedFlights[0].dep_time.split(" ")[1];
             document.getElementById("departure-arr-time").innerText = selectedFlights[0].arr_time.split(" ")[1];
-
             if (searchParameters.flightType === "round-trip") {
                 document.getElementById("arrival-dep-time").innerText = selectedFlights[1].dep_time.split(" ")[1];
                 document.getElementById("arrival-arr-time").innerText = selectedFlights[1].arr_time.split(" ")[1];
@@ -528,7 +527,7 @@
             </div>
             <div id="payment-page" class="d-none">
                 <h3>FLIGHT INFORMATIONS</h3>
-                <h2 th:text="${searchParameters.get('flightType').equals('round-trip')} ? ${searchParameters.get('departureCity')} + ' to ' + ${searchParameters.get('arrivalCity')} + ' | ' + ${searchParameters.get('departureDate')}
+                <h2 th:text="${searchParameters.get('flightType').equals('round-trip')} ? ${searchParameters.get('departureCity')} + ' to ' + ${searchParameters.get('arrivalCity')} + ' on ' + ${searchParameters.get('departureDate')}
                     + ' ~ ' + ${searchParameters.get('arrivalCity')} + ' to ' + ${searchParameters.get('departureCity')} + ' on ' + ${searchParameters.get('returnDate')} :
                     ${searchParameters.get('departureCity')} + ' to ' + ${searchParameters.get('arrivalCity')} + ' on ' + ${searchParameters.get('departureDate')}"></h2>
             </div>
@@ -680,7 +679,7 @@
                                 </div>
                                 <span class="float-start" th:text="${searchParameters.get('departureAirportIataCode')} + ' - ' + ${searchParameters.get('arrivalAirportIataCode')}"></span>
                                 <em class="fa fa-circle float-start px-1 mt-1" style="font-size: 7px"></em>
-                                <span class="float-start pr-2" th:text="${searchParameters.get('departureDate')}"></span>
+                                <span class="float-start pr-2" th:text="${searchParameters.get('shortDepartureDate')}"></span>
                                 <div class="lh-20 clearfix">
                                     <span class="float-start">Departure</span>
                                     <span class="float-start px-1" id="departure-dep-time"></span>
@@ -693,7 +692,7 @@
                                 <div class="h5 mt-0" style="font-size: 14px">Return</div>
                                 <span class="float-start" th:text="${searchParameters.get('arrivalAirportIataCode')} + ' - ' + ${searchParameters.get('departureAirportIataCode')}"></span>
                                 <em class="fa fa-circle float-start px-1 mt-1" style="font-size: 7px"></em>
-                                <span class="float-start pr-2" th:text="${searchParameters.get('returnDate')}"></span>
+                                <span class="float-start pr-2" th:text="${searchParameters.get('shortReturnDate')}"></span>
                                 <div class="lh-20 clearfix">
                                     <span class="float-start">Departure</span>
                                     <span class="float-start px-1" id="arrival-dep-time"></span>
@@ -703,7 +702,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card-selection col-lg-3 ml-3" style="padding-left: 27px">
+                        <div class="card-selection col-lg-3 ml-4" style="padding-left: 27px">
                             <label for="select-card" style="font-size: 14px; color: wheat">Select a payment card</label>
                             <th:block th:if="${cards.isEmpty()}">
                                 <div class="text-center">
@@ -714,7 +713,7 @@
                                 <option th:each="card : ${cards}" th:value="${card.getId()}" th:text="${card.getName()} + ' - ending with ' + ${card.getNumber().substring(12)}"></option>
                             </select>
                         </div>
-                        <div th:class="${searchParameters.get('flightType') == 'one-way'} ? 'col-2 pe-15 ml-5 mt-2' : 'col-2 pe-15 ml-2 mt-2'">
+                        <div th:class="${searchParameters.get('flightType') == 'one-way'} ? 'col-2 pe-15 ml-5 mt-2' : 'col-2 pe-15 ml-5 mt-2'">
                             <div class="price-count mt-15">
                                 <div class="lh-3" style="font-size: 12px">Total price for 1 passenger</div>
                                 <span class="fs-4 pl-2" id="total"></span>

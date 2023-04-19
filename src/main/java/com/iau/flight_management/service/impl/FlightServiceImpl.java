@@ -46,8 +46,10 @@ public class FlightServiceImpl implements FlightService {
         searchParameters.put("airlineIataCode", THY_IATA);
         searchParameters.put("airlineIcaoCode", THY_ICAO);
         searchParameters.put("departureDate", formatDate(formData.getFirst("departure-date")));
+        searchParameters.put("shortDepartureDate", shortenDate(formData.getFirst("departure-date")));
         if (formData.getFirst("flight-type").equals("round-trip") ) {
             searchParameters.put("returnDate", formatDate(formData.getFirst("return-date")));
+            searchParameters.put("shortReturnDate", shortenDate(formData.getFirst("return-date")));
         }
         searchParameters.put("passengers", formData.getFirst("passengers"));
 
@@ -137,5 +139,13 @@ public class FlightServiceImpl implements FlightService {
         SimpleDateFormat outputFormat = new SimpleDateFormat("EEEE, MMMM d", Locale.ENGLISH);
 
         return outputFormat.format(date);
+    }
+
+    @Override
+    public String shortenDate(String date) throws ParseException {
+        SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date inputDate = inputDateFormat.parse(date);
+        SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd MMM EEE", new Locale("en", "US"));
+        return outputDateFormat.format(inputDate);
     }
 }

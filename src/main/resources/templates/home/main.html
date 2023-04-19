@@ -98,59 +98,41 @@
             font-size: 18px;
         }
 
-        .dropdown {
-            position: relative;
-            display: inline-block;
+
+        .dropdown-menu {
+            position: absolute !important;
+            top: 100% !important;
+            left: 0 !important;
+            width: 100px !important;
+            background-color: #232b38 !important;
+            z-index: 1 !important;
+            padding: 0;
+            border-bottom-right-radius: 5px;
+            border-bottom-left-radius: 5px;
         }
 
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-            z-index: 1;
-            margin-top: 5px;
+        .dropdown-toggle::after {
+            content: none;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 5px 0;
+            text-decoration: none;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #20242c;
+        }
+
+        #logout {
+            border-bottom-right-radius: 5px;
+            border-bottom-left-radius: 5px;
         }
 
         #logout:hover {
-
-
-        }
-
-        .dropdown-content a {
-            color: white;
-            background-color: #212834;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-        }
-
-        /* Change color of dropdown links on hover */
-        .dropdown-content a:hover {
-            transition: .3s;
-            background-color: red;
-            color: white;
-            font-weight: bold;
-        }
-
-        /* Show the dropdown menu on hover */
-        .dropdown:hover .dropdown-content {
-            display: block;
-            top: 36px;
-        }
-
-        .dropbutton:hover {
-            text-decoration: none;
-            color: white;
-            /* border: 1px solid #656e71; */
-        }
-
-        /* Change the background color of the dropdown button when the dropdown content is shown */
-        .dropdown:hover .dropbutton {
-            background-color: #656e71;
-        }
-
-        .navbar-dropdown-item {
-            display: none;
+            background-color: #f01c34;
+            border: 3px solid #f01c34;
         }
 
         .container {
@@ -252,6 +234,12 @@
     <script th:inline="javascript">
         let airports = [];
 
+        // Get the width of the navbar link element
+        var navbarLinkWidth = $('.navbar-link').outerWidth();
+
+        // Set the width of the dropdown menu to match the navbar link element
+        $('.dropdown-menu').css('width', navbarLinkWidth + 'px');
+
         function handleDateChange() {
             const departureDate = new Date(document.getElementById("departure-date-input").value);
             const returnDate = new Date(document.getElementById("return-date-input").value);
@@ -343,9 +331,16 @@
     <div class="navbar-links nav navbar-nav flex-row mega-menu-main mr-3 d-none d-md-flex flex-for-desktop float-end">
         <a th:href="@{/cards}" class="navbar-link">CARDS</a>
         <a th:href="@{/reservations}" class="navbar-link">MY FLIGHTS</a>
-        <a sec:authentication="principal.name"  class="navbar-link text-uppercase font-weight-bold" href="#" style="text-align: center"></a>
-        <a class="navbar-link"><span class="fa fa-angle-down"></span></a>
-
+        <div class="dropdown">
+            <a class="navbar-link text-uppercase font-weight-bold dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <th:block sec:authentication="principal.name"></th:block>
+                <span class="fa fa-angle-down ml-2"></span>
+            </a>
+            <div class="dropdown-menu text-center text-capitalize mt-4" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="#">Edit profile</a>
+                <a class="dropdown-item" id="logout" th:href="@{/logout}">Logout</a>
+            </div>
+        </div>
     </div>
 </nav>
 

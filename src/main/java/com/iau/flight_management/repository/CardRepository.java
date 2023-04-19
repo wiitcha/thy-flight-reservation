@@ -12,6 +12,4 @@ public interface CardRepository extends JpaRepository<Card, Long> {
 
     List<Card> findAllByMemberIs(Member member);
     boolean existsCardByIdAndMemberIs(Long id, Member member);
-
-
 }

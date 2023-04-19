@@ -18,4 +18,5 @@ public interface FlightService {
     String convertDurationToHours(int duration);
     List<Flight> bookFlights(List<FlightDTO> flightDTOS);
     String formatDate(String htmlDate) throws ParseException;
+    String shortenDate(String date) throws ParseException;
 }

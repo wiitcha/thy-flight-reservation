@@ -30,13 +30,12 @@
                     $(this).closest('.flight-details-button').find('.details-button').removeClass('fa-angle-up').addClass('fa-angle-down');
                 } else {
                     $('.reservation-summary.active').removeClass('active').slideUp();
-                    summaryDiv.slideDown().addClass('active');
+                    summaryDiv.addClass('active').slideDown();
                     $('.flight-details-button i').removeClass('fa-angle-up').addClass('fa-angle-down');
                     let icon = $(this).closest('.flight-details-button').find('.details-button');
                     icon.toggleClass('fa-angle-down fa-angle-up');
                 }
             });
-
         });
 
 
@@ -225,6 +224,25 @@
             cursor: pointer;
         }
 
+        #cancel-reservation {
+            text-decoration: none;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            color: #f01c34;
+            border: 1px solid #f01c34;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: .2s;
+            background-color: white;
+        }
+
+        #cancel-reservation:hover {
+            text-decoration: none;
+            color: whitesmoke;
+            background-color: #f01c34;
+
+         }
+
 
 
     </style>
@@ -246,6 +264,11 @@
 <div th:if="${param.success}">
     <div class="alert alert-success alert-dismissible fade show col-xs-offset-1 col-xs-10 text-center">
         <em>Your booking has been successfully completed!</em>
+    </div>
+</div>
+<div th:if="${param.delete}">
+    <div class="alert alert-primary alert-dismissible fade show col-xs-offset-1 col-xs-10 text-center">
+        <em>Your reservation has been successfully cancelled!</em>
     </div>
 </div>
 <div class="content d-flex flex-column justify-content-start">
@@ -326,8 +349,16 @@
                 </div>
             </div>
         </div>
-        <div  th:id="'reservation-detail-' + ${reservation.getId()}" class="reservation-summary">
+        <div th:id="'reservation-detail-' + ${reservation.getId()}" class="reservation-summary">
             <div class="flight-details row d-flex justify-content-start align-items-center col-lg-12 ">
+                <div class="row d-flex align-items-start justify-content-start mb-3">
+                    <div class="col-4">
+                        <form method="post" th:action="@{/reservations(ref=${reservation.getReservationCode()})}">
+                            <button type="submit" id="cancel-reservation" class="text-center">Cancel reservation</button>
+                        </form>
+                    </div>
+                    <div class="col-8"></div>
+                </div>
                 <div class="summary p-3">
                     <div class="row">
                         <div class="col-6 ">

@@ -20,5 +20,7 @@ public interface ReservationService {
 
     List<ReservationDTO> convertReservationsToDto(List<Reservation> reservations);
 
+    String cancelReservation(String referenceCode, Member member);
+
 
 }

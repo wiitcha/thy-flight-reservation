@@ -27,7 +27,6 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public String bookReservation(Member member, FlightReservationModel flightReservationModel) throws JsonProcessingException {
-
         List<FlightDTO> flightDTOS = flightReservationModel.getFlights();
         List<PassengerDTO> passengerDTOS = flightReservationModel.getPassengers();
         Payment payment = paymentService.makePayment(flightDTOS, flightReservationModel.getCardId(), passengerDTOS);
@@ -64,7 +63,6 @@ public class ReservationServiceImpl implements ReservationService {
 
         do {
             sb.setLength(0);
-
             for (int i = 0; i < length; i++) {
                 int index = random.nextInt(alphabet.length());
                 char randomChar = alphabet.charAt(index);
@@ -96,5 +94,15 @@ public class ReservationServiceImpl implements ReservationService {
             reservationDTOS.add(reservationMapper.toDto(reservation));
         }
         return reservationDTOS;
+    }
+
+    @Override
+    public String cancelReservation(String referenceCode, Member member) {
+        if (reservationRepository.existsByReservationCodeAndMemberIs(referenceCode, member)) {
+            reservationRepository.deleteReservationByReservationCode(referenceCode);
+            return "redirect:/reservations?delete";
+        } else {
+            return "reservations?error";
+        }
     }
 }
