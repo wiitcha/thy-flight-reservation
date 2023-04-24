@@ -7,6 +7,8 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>My Flights</title>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/sweetalert/dist/sweetalert.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
@@ -37,6 +39,30 @@
                 }
             });
         });
+
+
+        function showDeleteAlert(event) {
+            event.preventDefault();
+
+            swal({
+                title: "Are you sure?",
+                text: "Do you really want to delete this reservation?",
+                icon: "warning",
+                buttons: ["Cancel", "Yes, delete it!"],
+                dangerMode: true
+            }).then(function(willSubmit) {
+                if (willSubmit) {
+                    swal("Poof! Your reservation has been deleted!", {
+                        icon: "success",
+                    });
+                    setTimeout(function () {
+                        event.target.submit();
+                    }, 1500);
+                }
+            });
+        }
+
+
 
 
     </script>
@@ -266,11 +292,6 @@
         <em>Your booking has been successfully completed!</em>
     </div>
 </div>
-<div th:if="${param.delete}">
-    <div class="alert alert-primary alert-dismissible fade show col-xs-offset-1 col-xs-10 text-center">
-        <em>Your reservation has been successfully cancelled!</em>
-    </div>
-</div>
 <div class="content d-flex flex-column justify-content-start">
     <div class="col-8 mt-4">
         <h1 class="font-weight-light" style="font-size: 64px">RESERVATIONS</h1>
@@ -353,7 +374,7 @@
             <div class="flight-details row d-flex justify-content-start align-items-center col-lg-12 ">
                 <div class="row d-flex align-items-start justify-content-start mb-3">
                     <div class="col-4">
-                        <form method="post" th:action="@{/reservations(ref=${reservation.getReservationCode()})}">
+                        <form method="post" id="cancel-reservation-form" onsubmit="showDeleteAlert(event)"  th:action="@{/reservations(ref=${reservation.getReservationCode()})}">
                             <button type="submit" id="cancel-reservation" class="text-center">Cancel reservation</button>
                         </form>
                     </div>

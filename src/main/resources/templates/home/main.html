@@ -100,6 +100,7 @@
 
 
         .dropdown-menu {
+            transition: .2s;
             position: absolute !important;
             top: 100% !important;
             left: 0 !important;
@@ -117,7 +118,7 @@
 
         .dropdown-menu a {
             display: block;
-            padding: 5px 0;
+            padding: 15px 0;
             text-decoration: none;
         }
 
@@ -235,7 +236,7 @@
         let airports = [];
 
         // Get the width of the navbar link element
-        var navbarLinkWidth = $('.navbar-link').outerWidth();
+        let navbarLinkWidth = $('.navbar-link').outerWidth();
 
         // Set the width of the dropdown menu to match the navbar link element
         $('.dropdown-menu').css('width', navbarLinkWidth + 'px');
