@@ -149,6 +149,8 @@
     </style>
     <script th:inline="javascript">
         let countryAndCities = [];
+        let countries = [];
+        let callingCodes = [];
 
         document.addEventListener("DOMContentLoaded", function () {
             let countrySelect = document.getElementById("country");
@@ -156,6 +158,35 @@
                 showCitiesOfSelectedCountry();
             })
         });
+
+        function getCountryAndCallingCodes() {
+            const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/';
+            const apiUrl = 'http://country.io/names.json';
+
+            fetch(corsProxyUrl + apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    // Process the data retrieved from the API
+                    callingCodes = data;
+                    setCallingCodes();
+                })
+                .catch(error => {
+                    // Handle any errors
+                    console.error(error);
+                });
+        }
+
+        function setCallingCodes() {
+            let countrySelect = document.getElementById("calling_code");
+
+            for (let i = 0; i < callingCodes.length; i++) {
+                const callingCodeOption = document.createElement("option");
+                let callingCode = callingCodes[i];
+                callingCodeOption.text = callingCode.name.common + ' (' + callingCode.idd.root + ')';
+                callingCodeOption.value = callingCode.idd.root;
+                countrySelect.appendChild(callingCodeOption);
+            }
+        }
 
         function getCountryAndCities() {
             let requestOptions = {
@@ -218,7 +249,7 @@
         }
     </script>
 </head>
-<body onload="getCountryAndCities()">
+<body onload="getCountryAndCities(); getCountryAndCallingCodes()">
 <div class="container">
     <form th:action="@{/auth/register}" th:object="${member}" method="post">
         <div class="row">
@@ -272,11 +303,21 @@
             </div>
         </div>
         <div class="row">
+            <label for="calling_code">Phone</label>
+            <div class="col-3">
+                <select id="calling_code" name="calling_code"></select>
+            </div>
+            <div class="col-9">
+                <input type="text" id="phone_number" name="phone_number">
+            </div>
+        </div>
+        <div class="row">
             <div class="col">
                 <label for="address">Address</label>
                 <textarea id="address" name="address" rows="3" required></textarea>
             </div>
         </div>
+
         <div class="row">
 <!--            <div class="col">-->
 <!--                <input type="checkbox" id="remember-me" name="remember-me">-->

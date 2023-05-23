@@ -32,7 +32,7 @@ public class Reservation {
     @Column(name = "hasExtraLuggage")
     private boolean hasExtraLuggage;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "id")
     private Payment payment;
 
@@ -40,13 +40,13 @@ public class Reservation {
     @JoinColumn(name = "reservations")
     public Member member;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinTable(name = "flight_reservation",
             joinColumns = @JoinColumn(name = "reservation_id"),
             inverseJoinColumns = @JoinColumn(name = "flight_id"))
     public List<Flight> flights;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinTable(name = "reservation_passenger",
             joinColumns = @JoinColumn(name = "reservation_id"),
             inverseJoinColumns = @JoinColumn(name = "passenger_id"))

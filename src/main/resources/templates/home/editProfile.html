@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Main Page</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,100;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body, html {
+            height: 100%;
+        }
+
+        :root {
+            --primary-color: #0C2340;
+            --secondary-color: #E30A17;
+            --body-color: #212834;
+            --body-color2: #303c44;
+            --light-color: #F6F6F6;
+            --color-primary: #E30B5D;
+            --color-primary-dark: #C1074D;
+            --color-primary-light: #F3A3B6;
+            --color-secondary: #0F0F0F;
+            --color-secondary-dark: #0B0B0B;
+            --color-secondary-light: #4C4C4C;
+            --color-white: #fff;
+            --color-black: #000;
+        }
+        /* General styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-size: 16px;
+            color: #333;
+            background-color: #edeff2;
+        }
+        /* Navbar styles */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #232b38;
+            padding: 10px 20px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar-logo {
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .navbar-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-links a {
+            color: #ececec;
+            border: 3px solid #232b38;
+            padding: 15px 30px;
+            text-decoration: none;
+            transition: .2s;
+            font-weight: bold;
+
+        }
+
+        .navbar-links a:hover {
+            /*background-color: #20242c;*/
+            color: white;
+            border-bottom: 3px solid red;
+
+        }
+
+        .navbar-link {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #333;
+            font-size: 18px;
+        }
+
+
+        .dropdown-menu {
+            transition: .2s;
+            position: absolute !important;
+            top: 100% !important;
+            left: 0 !important;
+            width: 100px !important;
+            background-color: #232b38 !important;
+            z-index: 1 !important;
+            padding: 0;
+            border-bottom-right-radius: 5px;
+            border-bottom-left-radius: 5px;
+        }
+
+        .dropdown-toggle::after {
+            content: none;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 15px 0;
+            text-decoration: none;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #20242c;
+        }
+
+        #logout {
+            border-bottom-right-radius: 5px;
+            border-bottom-left-radius: 5px;
+        }
+
+        #logout:hover {
+            background-color: #f01c34;
+            border: 3px solid #f01c34;
+        }
+
+        .content h2 {
+            color: #ffffff;
+        }
+
+        .card-header {
+            font-size: 22px;
+            background-color: #212529;
+            margin: 0;
+            line-height: 32px;
+        }
+
+        .card-body {
+            background-color: white;
+            padding: 30px;
+        }
+
+        .card-body h4 {
+            font-weight: bold;
+        }
+
+        h5 {
+            color: white;
+            margin: 5px 0;
+        }
+
+        .progress-wrapper {
+            border: 1px solid #d3d5d7;
+            padding: 7px;
+            box-shadow: inset 0 3px 15px -9px rgba(0,0,0,.5);
+            border-radius: 4px;
+            margin: 5px 0 25px;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .progress-bar-striped {
+            border-radius: 4px;
+        }
+
+        .change-pw {
+            font-size: 14px;
+            text-decoration: none;
+            color: #F84659FF;
+            font-weight: bold;
+            transition: .2s;
+        }
+
+        .card-body a:hover {
+            color: #c02c3c;
+            text-decoration: none;
+        }
+
+        .personal-details-content span {
+            color: #647286;
+            font-size: 13px;
+        }
+
+        .personal-details-content h4 {
+            font-size: 20px;
+        }
+
+        .total-miles h3{
+            color: white;
+            font-weight: lighter;
+
+        }
+        
+        .msBar .navbar-logo{
+            cursor: default;
+        }
+
+        .payment-info-body h4 {
+            font-size: 16px;
+        }
+
+        .awards {
+            background-color: white;
+            width: 100%;
+            padding: 30px;
+            font-size: 10px;
+        }
+
+        .footer-bottom {
+            padding: 36px;
+            background-color: #181c23;
+
+            font-size: 12px;
+        }
+        .footer-bottom a,
+        .footer-bottom span{
+            text-decoration: none;
+            color: #c3cbd7;
+        }
+
+        .modal-body label {
+            color: gray;
+            font-weight: lighter;
+        }
+
+
+    </style>
+    <script>
+
+    </script>
+</head>
+<body>
+<nav class="navbar">
+    <div class="navbar-logo">
+        <a th:href="@{/home}"><img src="https://cdn.turkishairlines.com/m/2190da9e53a70e4e/original/THY-LOGO.png"
+                                   class="d-none d-lg-block d-xl-block d-xxl-block" height="40px"></a>
+    </div>
+    <div class="navbar-links nav navbar-nav flex-row mega-menu-main mr-3 d-none d-md-flex flex-for-desktop float-end">
+        <a th:href="@{/cards}" class="navbar-link">CARDS</a>
+        <a th:href="@{/reservations}" class="navbar-link">MY FLIGHTS</a>
+        <div class="dropdown">
+            <a class="navbar-link text-uppercase font-weight-bold dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <th:block sec:authentication="principal.name"></th:block>
+                <span class="fa fa-angle-down ml-2"></span>
+            </a>
+            <div class="dropdown-menu text-center text-capitalize mt-4" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="#">Edit profile</a>
+                <a class="dropdown-item" id="logout" th:href="@{/logout}">Logout</a>
+            </div>
+        </div>
+    </div>
+</nav>
+<nav class="msBar navbar navbar-light bg-light">
+    <div class="navbar-logo col-6">
+        <img src="https://www.turkishairlines.com/theme/img/miles-and-smiles-new-logo.png">
+    </div>
+    <div class="mr-5 text-center mb-1 pull-right">
+        <h4 class="m-0 p-0 font-weight-light font-italic" style="cursor: default;">Personal Details</h4>
+    </div>
+
+</nav>
+
+<div class="w-100 position-absolute" style="height: 300px; background-color: #063048">
+
+</div>
+
+<div class="content d-flex justify-content-center align-items-start p-2 flex-column mx-auto mr-5 mt-5" style="width: 1200px;">
+    <div class="row">
+        <h4 style="color: white" class="col-12 font-weight-light">Welcome</h4>
+    </div>
+    <div class="row  mb-5">
+        <h2 class="col-12" sec:authentication="principal.name">ERGUN EMIR GULER</h2>
+    </div>
+    <div class="row total-miles mb-5">
+        <div class="col-12">
+            <h3>0 Total Miles</h3>
+        </div>
+    </div>
+    <div class="row mt-5 w-100 profile align-items-start">
+        <div class="col-6 myProfile-paymentInfo">
+            <div class="row card-header">
+                <div class="col-4">
+                    <h5 class="font-weight-light">My profile</h5>
+                </div>
+                <div class="col-8"></div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <h3 class="d-inline-block font-weight-bold" style="color: #f01c34">100%</h3>
+                        <h3 class="font-weight-light d-inline-block">Complete</h3>
+                    </div>
+                    <div class="col-6"></div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="progress-wrapper">
+                            <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: 100%; height: 30px" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <a class="change-pw" href="#" data-toggle="modal" data-target="#changePasswordModal">
+                            <span class="fs-14">Change password</span>
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                    <div class="col-6"></div>
+                </div>
+            </div>
+            <div class="row mt-4 paymentInfo">
+                <div class="col-12 payment-info">
+                    <div class="row col-12 card-header">
+                        <div class="col-12">
+                            <h5 class="font-weight-light">My payment information</h5>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row personal-details-content">
+                            <div class="col-6 text-start">
+                                <span>Cardholder name</span>
+                                <h4>ER*** GU***</h4>
+                            </div>
+                            <div class="col-6 text-end">
+                                <span>Card type</span>
+                                <h4>VISA</h4>
+                            </div>
+                        </div>
+                        <div class="row personal-details-content mt-4">
+                            <div class="col-6 text-start">
+                                <span>Card number</span>
+                                <h4>515755******8971</h4>
+                            </div>
+                            <div class="col-6 text-end">
+                                <span>Expiry date</span>
+                                <h4>08/2028</h4>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-6">
+                                <a class="change-pw" href="#">
+                                    <span class="fs-14">Remove</span>
+                                </a>
+                            </div>
+                            <div class="col-6 text-end">
+                                <a class="change-pw" href="#">
+                                    <span class="fs-14">Add</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 personalDetails-address">
+            <div class="row card-header">
+                <div class="col-4">
+                    <h5 class="font-weight-light">Personal details</h5>
+                </div>
+                <div class="col-8"></div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-2">
+                        <div class="image d-flex justify-content-center align-items-center rounded-circle" style="width: 55px; height: 55px;
+                                                background-color: #f01c34">
+                            <h5 th:text="${#strings.substring(passenger.getName(),0,1)} + ${#strings.substring(passenger.getSurname(),0,1)}" class="text-white m-0">EEG</h5>
+                        </div>
+                    </div>
+                    <div class="col-10 col-md-9 col-lg-10">
+                        <h4 class="d-inline-block" style="font-size: 18px">Mr ERGUN EMIR GULER</h4>
+                    </div>
+                </div>
+                <div class="row personal-details-content mt-4">
+                    <div class="col-6 text-start">
+                        <span>Academic title</span>
+                        <h4>Student</h4>
+                    </div>
+                    <div class="col-6 text-end">
+                        <span>Your Miles&Smiles membership number</span>
+                        <h4 style="color: #007bff">TK100000001</h4>
+                    </div>
+                </div>
+                <div class="row personal-details-content mt-4">
+                    <div class="col-6 text-start">
+                        <span>Country</span>
+                        <h4>Turkey</h4>
+                    </div>
+                    <div class="col-6 text-end">
+                        <span>City</span>
+                        <h4>Istanbul</h4>
+                    </div>
+                </div>
+                <div class="row personal-details-content mt-4">
+                    <div class="col-6 text-start">
+                        <span>Email</span>
+                        <h4>emir.witcha@gmail.com</h4>
+                    </div>
+                    <div class="col-6 text-end">
+                        <span>Date of birth</span>
+                        <h4>21.06.2001</h4>
+
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-6">
+                        <a class="change-pw" href="#" data-toggle="modal" data-target="#editPassengerModal">
+                            <span class="fs-14">Edit passenger details</span>
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                    <div class="col-6"></div>
+                </div>
+            </div>
+            <div class="row mt-4 paymentInfo">
+                <div class="col-12 payment-info">
+                    <div class="row col-12 card-header">
+                        <div class="col-12">
+                            <h5 class="font-weight-light">Preferred address</h5>
+                        </div>
+                    </div>
+                    <div class="card-body payment-info-body">
+                        <div class="row personal-details-content">
+                            <div class="col-6 text-start">
+                                <span>Address</span>
+                                <h4>Cumhuriyet mahallesi, Polat Sokak, Özgüvenler Sitesi D:4 HAVSA/EDİRNE</h4>
+                            </div>
+                            <div class="col-6">
+                            </div>
+                        </div>
+                        <div class="row personal-details-content mt-4">
+                            <div class="col-6 text-start">
+                                <span>Country</span>
+                                <h4>Turkey</h4>
+                            </div>
+                            <div class="col-6 text-end">
+
+                            </div>
+                        </div>
+                        <div class="row personal-details-content mt-4">
+                            <div class="col-6 text-start">
+                                <span>City</span>
+                                <h4>Adana</h4>
+                            </div>
+                            <div class="col-6">
+                            </div>
+                        </div>
+                        <div class="row personal-details-content mt-4">
+                            <div class="col-6 text-start">
+                                <span>Phone number</span>
+                                <h4>+90 531 200 6166</h4>
+                            </div>
+                            <div class="col-6 text-end">
+
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-6">
+                                <a class="change-pw" href="#" data-toggle="modal" data-target="#editAddressModal">
+                                    <span class="fs-14">Edit</span>
+                                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                            <div class="col-6">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header card-header">
+                <h5 class="modal-title font-weight-light" id="changePasswordModalLabel">Change password</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span style="color: white" aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body card-body">
+                <form class="change-pw flex justify-content-start align-items-start">
+                    <div class="row form-group">
+                        <label class="bg-gradient" for="password">Enter password</label>
+                        <input class="form-control" type="text" name="password" id="password">
+                    </div>
+                    <div class="row form-group">
+                        <label for="new-password">Create a new password</label>
+                        <input class="form-control" type="password" name="new-password" id="new-password"></div>
+                    <div class="row">
+                        <label for="password">Repeat password</label>
+                        <input class="form-control" type="password" name="repeat-password" id="repeat-password">
+                    </div>
+                    <div class="row form-group mt-4">
+                        <div class="col-6 text-start">
+                            <button class="btn btn-outline-secondary btn-lg w-100 font-weight-bold" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        </div>
+                        <div class="col-6 text-end">
+                            <input class="btn btn-danger btn-lg  w-100 font-weight-bold" type="submit" name="Change" value="Change">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="editPassengerModal" tabindex="-1" role="dialog" aria-labelledby="editPassengerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content ">
+            <div class="modal-header">
+                <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6 text-end">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body card-body ">
+                <form class="edit-passenger flex justify-content-start align-items-start">
+                    <div class="row">
+                        <label>Your Miles&Smiles membership number</label>
+                        <div class="col-12">
+                            <div disabled="disabled" class="form-control font-weight-bold px-3" style="cursor: default; background-color: lightgray; color: #5C6B7C">TK340695055</div>
+                        </div>
+                    </div>
+                    <fieldset class="mt-4">
+                        <legend>
+                            <h3>Personal Details</h3>
+                        </legend>
+                        <div class="row">
+                            <div class="col-md-3 ml-4">
+                                <input class="form-check-input" id="female-gender" type="radio" name="gender" value="Female">
+                                <label class="form-check-label" role="radio" for="female-gender" tabindex="0">Ms.</label>
+                            </div>
+                            <div class="col-md-3 ml-4">
+                                <input class="form-check-input" type="radio" id="male-gender" name="gender" value="Male">
+                                <label class="form-check-label" role="radio" for="female-gender" tabindex="0">Mr.</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="row mt-4">
+                        <label>Academic Title</label>
+                        <div class="col-12">
+                            <input class="form-control" type="text" id="academic-title">
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <label>Name</label>
+                        <div class="col-12"><input class="form-control" type="text" id="name"></div>
+                    </div>
+                    <div class="row mt-4">
+                        <label>Surname</label>
+                        <div class="col-12">
+                            <input class="form-control" type="text" id="surname">
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <label>Date of Birth</label>
+                        <div class="col-12">
+                            <input class="form-control" type="text" id="date-of-birth">
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <label>Country</label>
+                        <div class="col-12">
+                            <input class="form-control" type="text" id="country">
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <label>City</label>
+                        <div class="col-12">
+                            <input class="form-control" type="text" id="city">
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <label>Email</label>
+                        <div class="col-12">
+                            <input class="form-control" type="text" id="email">
+                        </div>
+                    </div>
+                    <div class="row form-group mt-4">
+                        <div class="col-6 text-start">
+                            <button class="btn btn-outline-secondary btn-lg w-100 font-weight-bold" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        </div>
+                        <div class="col-6 text-end">
+                            <input class="btn btn-danger btn-lg  w-100 font-weight-bold" type="submit" name="update" value="Update details">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="editAddressModal" tabindex="-1" role="dialog" aria-labelledby="changeAddressModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content ">
+            <div class="modal-header">
+                <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6 text-end">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body card-body ">
+                <form class="edit-passenger flex justify-content-start align-items-start">
+
+                    <div class="row mt-4">
+                        <label for="address">Address</label>
+                        <div class="col-12">
+                            <textarea class="form-check w-100" id="address"></textarea>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <label>Country</label>
+                            <select class="form-select">
+                                <option>Turkey</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <label>City</label>
+                            <select class="form-select">
+                                <option>Edirne</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <label>Phone number</label>
+                        <div class="col-4">
+                            <select class="form-select">
+                                <option>+90</option>
+                            </select>
+                        </div>
+                        <div class="col-8">
+                            <input class="form-control w-100" type="text" id="phone">
+                        </div>
+                    </div>
+                    <div class="row form-group mt-4">
+                        <div class="col-6 text-start">
+                            <button class="btn btn-outline-secondary btn-lg w-100 font-weight-bold" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        </div>
+                        <div class="col-6 text-end">
+                            <input class="btn btn-danger btn-lg  w-100 font-weight-bold" type="submit" name="update" value="Save">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="awards d-flex justify-content-center align-items-center mt-4">
+    <div class="d-flex align-items-center">
+        <a href="/en-int/turkish-airlines-apex-world-class-award/" target="_blank">
+            <img src="https://cdn.turkishairlines.com/m/54deaaa16552ddf1/original/01-1.png" class="brand">
+        </a>
+        <div class="fw700 fs-10 ms-10 me-10 ml-2">WORLD CLASS AIRLINE</div>
+    </div>
+    <div class="d-flex align-items-center ml-4">
+        <a href="/en-int/turkish-airlines-apex-world-class-award/" target="_blank">
+            <img src="https://cdn.turkishairlines.com/m/2a88f72d6aa16dbc/original/02-1.png" class="brand">
+        </a>
+        <div class="fw700 fs-10 ms-10 me-10 ml-2">FIVE STAR GLOBAL AIRLINE</div>
+    </div>
+    <div class="d-flex align-items-center ml-4 mr-4">
+        <a href="https://skytraxratings.com/airlines/turkish-airlines-rating " target="_blank">
+            <img src="https://cdn.turkishairlines.com/m/748afa20623a4476/original/03-1.png" class="brand">
+        </a>
+        <div class="fw700 fs-10 ms-10 me-10 ml-2">BEST AIRLINE IN EUROPE</div>
+    </div>
+    <div class="d-flex align-items-center">
+        <a href="https://skytraxratings.com/airlines/turkish-airlines-rating" target="_blank">
+            <img src="https://cdn.turkishairlines.com/m/f2ac91d6b77e22c/original/04-1.png" class="brand">
+        </a>
+        <div class="fw700 fs-10 ms-10 me-10 ml-2">WORLD'S BEST BUSINESS CLASS CATERING</div>
+    </div>
+</div>
+<div class="footer-bottom">
+    <div class="container">
+        <div class="d-flex justify-content-center align-items-center justify-content-around h-100">
+            <a href="/en-int/accessibility/" target="_blank">Accessibility</a>
+            <a href="/en-int/legal-notice/privacy-policy/" target="_blank">Privacy &amp; Cookie Policy</a>
+            <a href="/en-int/legal-notice/" target="_blank">Legal Notice</a>
+            <a href="/en-int/legal-notice/passenger-rights/" target="_blank">Passenger Rights</a>
+            <a href="/en-int/legal-notice/privacy-policy/cookies/"></a><a href="#" id="cookieModalA" class="cookieWarning-customCatch" name="cookieModalA">Change Cookie Settings </a> <a href="/en-int/legal-notice/gdpr-privacy-notice/" target="_blank">EU Data Subjects Rights</a>
+            <span class="copy"> Turkish Airlines Copyright © 1996 - 2023 </span>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
