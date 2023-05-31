@@ -1,5 +1,7 @@
 package com.iau.flight_management.service.impl;
 
+import com.iau.flight_management.mapper.MemberMapper;
+import com.iau.flight_management.model.dto.MemberDTO;
 import com.iau.flight_management.model.entity.Member;
 import com.iau.flight_management.repository.MemberRepository;
 import com.iau.flight_management.security.config.JwtService;
@@ -16,6 +18,7 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final JwtService jwtService;
+    private final MemberMapper memberMapper;
     @Override
     public boolean existsByEmail(String email) {
         return memberRepository.existsByEmail(email);
@@ -37,5 +40,13 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findByEmail(email);
     }
 
+    @Override
+    public MemberDTO convertMemberToDto(Member member) {
+        return memberMapper.toDto(member);
+    }
 
+    @Override
+    public void saveMember(Member member) {
+        memberRepository.save(member);
+    }
 }

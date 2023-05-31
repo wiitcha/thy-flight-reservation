@@ -2,6 +2,7 @@ package com.iau.flight_management.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.iau.flight_management.model.FlightReservationModel;
+import com.iau.flight_management.model.dto.FlightDTO;
 import com.iau.flight_management.model.dto.ReservationDTO;
 import com.iau.flight_management.model.entity.Member;
 import com.iau.flight_management.model.entity.Reservation;
@@ -21,6 +22,9 @@ public interface ReservationService {
     List<ReservationDTO> convertReservationsToDto(List<Reservation> reservations);
 
     String cancelReservation(String referenceCode, Member member);
+    Integer calculateMiles(int duration);
+    int convertTimeToMinutes(String time);
+    void addMiles(Member member, List<FlightDTO> flights);
 
 
 }

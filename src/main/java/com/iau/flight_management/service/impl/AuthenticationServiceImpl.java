@@ -38,6 +38,9 @@ public class AuthenticationServiceImpl {
                 .country(request.getCountry())
                 .city(request.getCity())
                 .address(request.getAddress())
+                .phoneNumber(request.getPhoneNumber().replace(",", ""))
+                .membershipNumber(getLastMembershipNumber() + 1)
+                .totalMiles(0)
                 .roles(new ArrayList<>(roleRepository.findAllByTitleIs("ROLE_USER")))
                 .build();
 
@@ -64,5 +67,14 @@ public class AuthenticationServiceImpl {
         );
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         return this.jwtService.generateToken(user);
+    }
+
+    public Long getLastMembershipNumber() {
+        Member member = memberRepository.findFirstByOrderByMembershipNumberDesc();
+        if (member != null) {
+            return member.getMembershipNumber();
+        } else {
+            return Long.valueOf(100000000);
+        }
     }
 }

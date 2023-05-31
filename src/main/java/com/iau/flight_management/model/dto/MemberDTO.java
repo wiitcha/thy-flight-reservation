@@ -24,7 +24,7 @@ public class MemberDTO implements UserDetails {
     private String address;
     private String phoneNumber;
     private String academicTitle;
-    private Integer miles;
+    private Integer totalMiles;
     private Long membershipNumber;
     private List<RoleDTO> roles;
     private List<CardDTO> cards;

@@ -60,6 +60,23 @@
                 }
             });
         }
+
+        function formatPhone(phoneInput) {
+            let phone = phoneInput.value.replace(/\D/g, '');
+
+            let formattedPhone = '';
+            if (phone.length > 0) {
+                formattedPhone = '(' + phone.substring(0, 3);
+                if (phone.length > 3) {
+                    formattedPhone += ') ' + phone.substring(3, 6);
+                }
+                if (phone.length > 6) {
+                    formattedPhone += '-' + phone.substring(6);
+                }
+            }
+
+            phoneInput.value = formattedPhone;
+        }
     </script>
     <style>
 
@@ -67,8 +84,6 @@
             box-sizing: border-box;
             font-family: 'Roboto', sans-serif;
         }
-
-        body {}
 
         .navbar {
             display: flex;
@@ -112,6 +127,44 @@
             text-decoration: none;
             color: #333;
             font-size: 18px;
+        }
+
+
+        .dropdown-menu {
+            transition: .2s;
+            position: absolute !important;
+            top: 100% !important;
+            left: 0 !important;
+            width: 100px !important;
+            background-color: #232b38 !important;
+            z-index: 1 !important;
+            padding: 0;
+            border-bottom-right-radius: 5px;
+            border-bottom-left-radius: 5px;
+        }
+
+        .dropdown-toggle::after {
+            content: none;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 15px 0;
+            text-decoration: none;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #20242c;
+        }
+
+        #logout {
+            border-bottom-right-radius: 5px;
+            border-bottom-left-radius: 5px;
+        }
+
+        #logout:hover {
+            background-color: #f01c34;
+            border: 3px solid #f01c34;
         }
 
         .content {
@@ -264,6 +317,25 @@
 
          }
 
+        .awards {
+            background-color: white;
+            width: 100%;
+            padding: 30px;
+            font-size: 10px;
+        }
+
+        .footer-bottom {
+            padding: 36px;
+            background-color: #181c23;
+
+            font-size: 12px;
+        }
+        .footer-bottom a,
+        .footer-bottom span{
+            text-decoration: none;
+            color: #c3cbd7;
+        }
+
 
 
     </style>
@@ -277,8 +349,16 @@
     <div class="navbar-links nav navbar-nav flex-row mega-menu-main mr-3 d-none d-md-flex flex-for-desktop float-end">
         <a th:href="@{/cards}" class="navbar-link">CARDS</a>
         <a th:href="@{/reservations}" class="navbar-link">MY FLIGHTS</a>
-        <a sec:authentication="principal.name"  class="navbar-link text-uppercase font-weight-bold" href="#" style="text-align: center"></a>
-        <a class="navbar-link"><span class="fa fa-angle-down"></span></a>
+        <div class="dropdown">
+            <a class="navbar-link text-uppercase font-weight-bold dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <th:block sec:authentication="principal.name"></th:block>
+                <span class="fa fa-angle-down ml-2"></span>
+            </a>
+            <div class="dropdown-menu text-center text-capitalize mt-4" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" th:href="@{/profile}">Edit profile</a>
+                <a class="dropdown-item" id="logout" th:href="@{/logout}">Logout</a>
+            </div>
+        </div>
     </div>
 </nav>
 
@@ -533,8 +613,6 @@
                         <div class="col-6 d-flex justify-content-end align-content-start">
                             <h1 class="mr-2">TRY </h1>
                             <h1 th:text="${reservation.getPayment().getTotal()}" class="mr-1"><i class="fa fa-try" aria-hidden="true"></i></h1>
-
-                            <!--                        <span  class="position-absolute" style="right: 0; top: -5px;">86/</span>-->
                         </div>
                     </div>
                 </div>
@@ -567,7 +645,7 @@
                                             <div class="row">
                                                 <div class="col-12 m-0">
                                                     <span style="font-size: 12px">Passenger info • </span>
-                                                    <a class="passenger-edit m-0 font-weight-bold" style="font-size: 12px">Edit</a>
+                                                    <a class="passenger-edit m-0 font-weight-bold" data-toggle="modal" th:data-target="${'#editPassenger-' + passenger.getId()}" style="font-size: 12px">Edit</a>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -592,6 +670,63 @@
                                             <h3 th:text="${passenger.getGender()}"></h3>
                                         </div>
                                     </td>
+                                    <div class="modal fade" th:id="${'editPassenger-' + passenger.getId()}" tabindex="-1" role="dialog" th:aria-labelledby="${'editPassengerModalLabel-' + passenger.getId()}" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header card-header">
+                                                    <h5 class="modal-title font-weight-light" id="addCardModalLabel">Edit passenger</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span style="color: white" aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body card-body">
+                                                    <form th:id="${'passengerForm-' + passenger.getId()}" onsubmit="sendReservationInfos(event)" method="post">
+                                                        <div class="form-row mt-2">
+                                                            <div class="form-group col-md-6">
+                                                                <label class="font-weight-bold" th:for="name + ${passenger.getId()}">Name:</label>
+                                                                <input type="text" th:value="${passenger.getName()}" th:id="name + ${passenger.getId()}" name="name" class="form-control" required>
+                                                            </div>
+                                                            <div class="form-group col-md-6">
+                                                                <label class="font-weight-bold" th:for="surname + ${passenger.getId()}">Surname:</label>
+                                                                <input type="text" th:value="${passenger.getSurname()}" th:id="surname  + ${passenger.getId()}" name="surname" class="form-control" required>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-row">
+                                                            <div class="form-group col-md-6">
+                                                                <label class="font-weight-bold" th:for="dateOfBirth + ${passenger.getId()}">Date of Birth:</label>
+                                                                <input type="date" th:value="${passenger.getDateOfBirth()}" th:id="dateOfBirth + ${passenger.getId()}" name="dateOfBirth" class="form-control" required>
+                                                            </div>
+                                                            <div class=" form-group col-md-6">
+                                                                <label class="font-weight-bold" th:for="gender + ${passenger.getId()}">Gender:</label>
+                                                                <select th:id="gender + ${passenger.getId()}" name="gender" class="form-control" required>
+                                                                    <option value="Male" th:selected="${passenger.getGender() == 'Male'}">Male</option>
+                                                                    <option value="Female" th:selected="${passenger.getGender() == 'Female'}">Female</option>
+                                                                    <option value="Other" th:selected="${passenger.getGender() == 'Other'}">Other</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-row">
+                                                            <div class="form-group col-md-12">
+                                                                <label class="font-weight-bold" th:for="phoneNumber + ${passenger.getId()}">Phone Number:</label>
+                                                                <input type="tel" maxlength="14" th:value="${passenger.getPhoneNumber()}" onkeyup="formatPhone(this)" th:id="phoneNumber + ${passenger.getId()}" name="phoneNumber" pattern="\(\d{3}\) \d{3}-\d{4}" class="form-control" placeholder="(123) 456-7890" required>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row form-group mt-4">
+                                                            <div class="col-6 text-start">
+                                                                <button class="btn btn-outline-secondary btn-lg w-100 font-weight-bold" type="button" data-dismiss="modal">Cancel</button>
+                                                            </div>
+                                                            <div class="col-6 text-end">
+                                                                <input class="btn btn-danger btn-lg  w-100 font-weight-bold" type="submit" name="update" value="Save">
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </tr>
                                 </tbody>
                             </table>
@@ -599,6 +734,45 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="awards d-flex justify-content-center align-items-center mt-4">
+    <div class="d-flex align-items-center">
+        <a href="/en-int/turkish-airlines-apex-world-class-award/" target="_blank">
+            <img src="https://cdn.turkishairlines.com/m/54deaaa16552ddf1/original/01-1.png" class="brand">
+        </a>
+        <div class="fw700 fs-10 ms-10 me-10 ml-2">WORLD CLASS AIRLINE</div>
+    </div>
+    <div class="d-flex align-items-center ml-4">
+        <a href="/en-int/turkish-airlines-apex-world-class-award/" target="_blank">
+            <img src="https://cdn.turkishairlines.com/m/2a88f72d6aa16dbc/original/02-1.png" class="brand">
+        </a>
+        <div class="fw700 fs-10 ms-10 me-10 ml-2">FIVE STAR GLOBAL AIRLINE</div>
+    </div>
+    <div class="d-flex align-items-center ml-4 mr-4">
+        <a href="https://skytraxratings.com/airlines/turkish-airlines-rating " target="_blank">
+            <img src="https://cdn.turkishairlines.com/m/748afa20623a4476/original/03-1.png" class="brand">
+        </a>
+        <div class="fw700 fs-10 ms-10 me-10 ml-2">BEST AIRLINE IN EUROPE</div>
+    </div>
+    <div class="d-flex align-items-center">
+        <a href="https://skytraxratings.com/airlines/turkish-airlines-rating" target="_blank">
+            <img src="https://cdn.turkishairlines.com/m/f2ac91d6b77e22c/original/04-1.png" class="brand">
+        </a>
+        <div class="fw700 fs-10 ms-10 me-10 ml-2">WORLD'S BEST BUSINESS CLASS CATERING</div>
+    </div>
+</div>
+<div class="footer-bottom">
+    <div class="container">
+        <div class="d-flex justify-content-center align-items-center justify-content-around h-100">
+            <a href="/en-int/accessibility/" target="_blank">Accessibility</a>
+            <a href="/en-int/legal-notice/privacy-policy/" target="_blank">Privacy &amp; Cookie Policy</a>
+            <a href="/en-int/legal-notice/" target="_blank">Legal Notice</a>
+            <a href="/en-int/legal-notice/passenger-rights/" target="_blank">Passenger Rights</a>
+            <a href="/en-int/legal-notice/privacy-policy/cookies/"></a><a href="#" id="cookieModalA" class="cookieWarning-customCatch" name="cookieModalA">Change Cookie Settings </a> <a href="/en-int/legal-notice/gdpr-privacy-notice/" target="_blank">EU Data Subjects Rights</a>
+            <span class="copy"> Turkish Airlines Copyright © 1996 - 2023 </span>
         </div>
     </div>
 </div>

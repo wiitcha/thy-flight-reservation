@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,100;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
@@ -189,6 +191,24 @@
 
         }
 
+        .awards {
+            background-color: white;
+            width: 100%;
+            padding: 30px;
+            font-size: 10px;
+        }
+
+        .footer-bottom {
+            padding: 36px;
+            background-color: #181c23;
+            font-size: 12px;
+        }
+        .footer-bottom a,
+        .footer-bottom span{
+            text-decoration: none;
+            color: #c3cbd7;
+        }
+
 
     </style>
 </head>
@@ -236,6 +256,43 @@
             <p>Not a member? <a th:href="@{/register}">Sign up</a></p>
         </div>
     </form>
+</div>
+
+<div class="awards d-flex justify-content-center align-items-center mt-4">
+    <div class="d-flex align-items-center">
+        <a href="/en-int/turkish-airlines-apex-world-class-award/" target="_blank">
+            <img src="https://cdn.turkishairlines.com/m/54deaaa16552ddf1/original/01-1.png" class="brand">
+        </a>
+        <div class="fw700 fs-10 ms-10 me-10 ml-2">WORLD CLASS AIRLINE</div>
+    </div>
+    <div class="d-flex align-items-center ml-4">
+        <a href="/en-int/turkish-airlines-apex-world-class-award/" target="_blank">
+            <img src="https://cdn.turkishairlines.com/m/2a88f72d6aa16dbc/original/02-1.png" class="brand">
+        </a>
+        <div class="fw700 fs-10 ms-10 me-10 ml-2">FIVE STAR GLOBAL AIRLINE</div>
+    </div>
+    <div class="d-flex align-items-center ml-4 mr-4">
+        <a href="https://skytraxratings.com/airlines/turkish-airlines-rating " target="_blank">
+            <img src="https://cdn.turkishairlines.com/m/748afa20623a4476/original/03-1.png" class="brand">
+        </a>
+        <div class="fw700 fs-10 ms-10 me-10 ml-2">BEST AIRLINE IN EUROPE</div>
+    </div>
+    <div class="d-flex align-items-center">
+        <a href="https://skytraxratings.com/airlines/turkish-airlines-rating" target="_blank">
+            <img src="https://cdn.turkishairlines.com/m/f2ac91d6b77e22c/original/04-1.png" class="brand">
+        </a>
+        <div class="fw700 fs-10 ms-10 me-10 ml-2">WORLD'S BEST BUSINESS CLASS CATERING</div>
+    </div>
+</div>
+<div class="footer-bottom">
+    <div class="d-flex justify-content-center align-items-center justify-content-around h-100">
+        <a href="/en-int/accessibility/" target="_blank">Accessibility</a>
+        <a href="/en-int/legal-notice/privacy-policy/" target="_blank">Privacy &amp; Cookie Policy</a>
+        <a href="/en-int/legal-notice/" target="_blank">Legal Notice</a>
+        <a href="/en-int/legal-notice/passenger-rights/" target="_blank">Passenger Rights</a>
+        <a href="/en-int/legal-notice/privacy-policy/cookies/"></a><a href="#" id="cookieModalA" class="cookieWarning-customCatch" name="cookieModalA">Change Cookie Settings </a> <a href="/en-int/legal-notice/gdpr-privacy-notice/" target="_blank">EU Data Subjects Rights</a>
+        <span class="copy"> Turkish Airlines Copyright © 1996 - 2023 </span>
+    </div>
 </div>
 </body>
 </html>

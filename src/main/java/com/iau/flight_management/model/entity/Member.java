@@ -50,12 +50,11 @@ public class Member implements UserDetails {
     @Column(name = "academic_title")
     private String academicTitle;
 
-    @Column(name = "total_miles", columnDefinition = "INT DEFAULT 0")
+    @Column(name = "total_miles", columnDefinition = "integer default 0")
     private Integer totalMiles;
 
-    @Column(name = "membership_number", columnDefinition = "LONG DEFAULT 100000000")
+    @Column(name = "membership_number", unique = true)
     private Long membershipNumber;
-
 
     @ManyToMany
     @JoinTable(

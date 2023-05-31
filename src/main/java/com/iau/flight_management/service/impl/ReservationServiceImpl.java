@@ -23,6 +23,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final PaymentService paymentService;
     private final PassengerService passengerService;
     private final FlightService flightService;
+    private final MemberService memberService;
     private final ReservationMapper reservationMapper;
 
     @Override
@@ -47,6 +48,7 @@ public class ReservationServiceImpl implements ReservationService {
                     .build();
 
             reservationRepository.save(reservation);
+            addMiles(member, flightDTOS);
 
             return "redirect:/reservations?success";
         }
@@ -104,5 +106,38 @@ public class ReservationServiceImpl implements ReservationService {
         } else {
             return "reservations?error";
         }
+    }
+
+    @Override
+    public Integer calculateMiles(int duration) {
+        return duration * 12; // 12 km/min is speed of the plane in minutes
+    }
+
+    @Override
+    public int convertTimeToMinutes(String time) {
+        String[] parts = time.split("[hm\\s]+");
+        int hours = Integer.parseInt(parts[0]);
+        int minutes = 0;
+
+        if (parts.length > 1) {
+            hours = Integer.parseInt(parts[0]);
+            minutes = Integer.parseInt(parts[1]);
+        } else {
+            minutes = Integer.parseInt(parts[0]);
+        }
+
+        return hours * 60 + minutes;
+    }
+
+    @Override
+    public void addMiles(Member member, List<FlightDTO> flights) {
+        Integer miles = 0;
+
+        for (FlightDTO flight: flights) {
+            int durationInMinutes = convertTimeToMinutes(flight.getDuration());
+            miles += calculateMiles(durationInMinutes);
+        }
+        member.setTotalMiles(member.getTotalMiles() + miles);
+        memberService.saveMember(member);
     }
 }

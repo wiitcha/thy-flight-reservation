@@ -149,8 +149,8 @@
     </style>
     <script th:inline="javascript">
         let countryAndCities = [];
-        let countries = [];
         let callingCodes = [];
+        let callingCodesAndSuffixes = [];
 
         document.addEventListener("DOMContentLoaded", function () {
             let countrySelect = document.getElementById("country");
@@ -160,20 +160,26 @@
         });
 
         function getCountryAndCallingCodes() {
-            const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/';
-            const apiUrl = 'http://country.io/names.json';
-
-            fetch(corsProxyUrl + apiUrl)
+            fetch('https://restcountries.com/v3.1/independent?status=true&fields=idd')
                 .then(response => response.json())
                 .then(data => {
-                    // Process the data retrieved from the API
-                    callingCodes = data;
+                    // Use the JSON data here
+                    callingCodesAndSuffixes = data;
+                    filterCallingCodes(callingCodesAndSuffixes);
+                    callingCodes.sort((a, b) => a.localeCompare(b));
                     setCallingCodes();
                 })
                 .catch(error => {
-                    // Handle any errors
-                    console.error(error);
+                    // Handle any errors that occur during the fetch
+                    console.error('Error:', error);
                 });
+        }
+
+        function filterCallingCodes(restCountriesResponse) {
+            for (let i = 0; i < restCountriesResponse.length; i++) {
+                let callingCode = restCountriesResponse[i].idd.root + restCountriesResponse[i].idd.suffixes[0];
+                callingCodes.push(callingCode);
+            }
         }
 
         function setCallingCodes() {
@@ -181,9 +187,8 @@
 
             for (let i = 0; i < callingCodes.length; i++) {
                 const callingCodeOption = document.createElement("option");
-                let callingCode = callingCodes[i];
-                callingCodeOption.text = callingCode.name.common + ' (' + callingCode.idd.root + ')';
-                callingCodeOption.value = callingCode.idd.root;
+                callingCodeOption.text = '(' + callingCodes[i] + ')' ;
+                callingCodeOption.value = callingCodes[i];
                 countrySelect.appendChild(callingCodeOption);
             }
         }
@@ -304,11 +309,11 @@
         </div>
         <div class="row">
             <label for="calling_code">Phone</label>
-            <div class="col-3">
-                <select id="calling_code" name="calling_code"></select>
+            <div class="col-2">
+                <select id="calling_code" name="phoneNumber"></select>
             </div>
-            <div class="col-9">
-                <input type="text" id="phone_number" name="phone_number">
+            <div class="col-10">
+                <input type="text" id="phone_number" name="phoneNumber">
             </div>
         </div>
         <div class="row">

@@ -237,11 +237,54 @@
 
 
     </style>
-    <script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        let memberInfo = /*[[${member}]]*/ [];
+        /*]]>*/
+
+        let callingCodes = [];
+        let callingCodesAndSuffixes = [];
+
+        function getCountryAndCallingCodes() {
+            fetch('https://restcountries.com/v3.1/independent?status=true&fields=idd')
+                .then(response => response.json())
+                .then(data => {
+                    // Use the JSON data here
+                    callingCodesAndSuffixes = data;
+                    filterCallingCodes(callingCodesAndSuffixes);
+                    callingCodes.sort((a, b) => a.localeCompare(b));
+                    setCallingCodes();
+                })
+                .catch(error => {
+                    // Handle any errors that occur during the fetch
+                    console.error('Error:', error);
+                });
+        }
+
+        function filterCallingCodes(restCountriesResponse) {
+            for (let i = 0; i < restCountriesResponse.length; i++) {
+                let callingCode = restCountriesResponse[i].idd.root + restCountriesResponse[i].idd.suffixes[0];
+                callingCodes.push(callingCode);
+            }
+        }
+
+        function setCallingCodes() {
+            let countrySelect = document.getElementById("calling_code");
+
+            for (let i = 0; i < callingCodes.length; i++) {
+                const callingCodeOption = document.createElement("option");
+                callingCodeOption.text = '(' + callingCodes[i] + ')' ;
+                callingCodeOption.value = callingCodes[i];
+                if(callingCodes[i] === "+90") {
+                    callingCodeOption.selected = true;
+                }
+                countrySelect.appendChild(callingCodeOption);
+            }
+        }
 
     </script>
 </head>
-<body>
+<body onload="getCountryAndCallingCodes()">
 <nav class="navbar">
     <div class="navbar-logo">
         <a th:href="@{/home}"><img src="https://cdn.turkishairlines.com/m/2190da9e53a70e4e/original/THY-LOGO.png"
@@ -256,7 +299,7 @@
                 <span class="fa fa-angle-down ml-2"></span>
             </a>
             <div class="dropdown-menu text-center text-capitalize mt-4" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item" href="#">Edit profile</a>
+                <a class="dropdown-item" th:href="@{/profile}">Edit profile</a>
                 <a class="dropdown-item" id="logout" th:href="@{/logout}">Logout</a>
             </div>
         </div>
@@ -281,11 +324,11 @@
         <h4 style="color: white" class="col-12 font-weight-light">Welcome</h4>
     </div>
     <div class="row  mb-5">
-        <h2 class="col-12" sec:authentication="principal.name">ERGUN EMIR GULER</h2>
+        <h2 class="col-12" th:text="${member.getName() + ' ' + member.getSurname()}"></h2>
     </div>
     <div class="row total-miles mb-5">
         <div class="col-12">
-            <h3>0 Total Miles</h3>
+            <h3 th:text="${member.getTotalMiles()} + ' Total Miles'"></h3>
         </div>
     </div>
     <div class="row mt-5 w-100 profile align-items-start">
@@ -332,7 +375,7 @@
                         <div class="row personal-details-content">
                             <div class="col-6 text-start">
                                 <span>Cardholder name</span>
-                                <h4>ER*** GU***</h4>
+                                <h4 th:text="${member.getName().substring(0,2) + '***' + ' ' + member.getSurname().substring(0,2) + '***'}"></h4>
                             </div>
                             <div class="col-6 text-end">
                                 <span>Card type</span>
@@ -356,7 +399,7 @@
                                 </a>
                             </div>
                             <div class="col-6 text-end">
-                                <a class="change-pw" href="#">
+                                <a class="change-pw" href="#" data-toggle="modal" data-target="#editCardsModal">
                                     <span class="fs-14">Add</span>
                                 </a>
                             </div>
@@ -377,37 +420,37 @@
                     <div class="col-2">
                         <div class="image d-flex justify-content-center align-items-center rounded-circle" style="width: 55px; height: 55px;
                                                 background-color: #f01c34">
-                            <h5 th:text="${#strings.substring(passenger.getName(),0,1)} + ${#strings.substring(passenger.getSurname(),0,1)}" class="text-white m-0">EEG</h5>
+                            <h5 th:text="${#strings.substring(member.getName(),0,1)} + ${#strings.substring(member.getSurname(),0,1)}" class="text-white m-0"></h5>
                         </div>
                     </div>
                     <div class="col-10 col-md-9 col-lg-10">
-                        <h4 class="d-inline-block" style="font-size: 18px">Mr ERGUN EMIR GULER</h4>
+                        <h4 th:text="${member.getName() + ' ' + member.getSurname()}" class="d-inline-block" style="font-size: 18px"></h4>
                     </div>
                 </div>
                 <div class="row personal-details-content mt-4">
                     <div class="col-6 text-start">
                         <span>Academic title</span>
-                        <h4>Student</h4>
+                        <h4 th:text="${member.getAcademicTitle() == null} ? '-' : ${member.getAcademicTitle()}"></h4>
                     </div>
                     <div class="col-6 text-end">
                         <span>Your Miles&Smiles membership number</span>
-                        <h4 style="color: #007bff">TK100000001</h4>
+                        <h4 th:text="'TK' + ${member.getMembershipNumber()}" style="color: #007bff"></h4>
                     </div>
                 </div>
                 <div class="row personal-details-content mt-4">
                     <div class="col-6 text-start">
                         <span>Country</span>
-                        <h4>Turkey</h4>
+                        <h4 th:text="${member.getCountry()}"></h4>
                     </div>
                     <div class="col-6 text-end">
                         <span>City</span>
-                        <h4>Istanbul</h4>
+                        <h4 th:text="${member.getCity()}">Istanbul</h4>
                     </div>
                 </div>
                 <div class="row personal-details-content mt-4">
                     <div class="col-6 text-start">
                         <span>Email</span>
-                        <h4>emir.witcha@gmail.com</h4>
+                        <h4 th:text="${member.getEmail()}"></h4>
                     </div>
                     <div class="col-6 text-end">
                         <span>Date of birth</span>
@@ -436,7 +479,7 @@
                         <div class="row personal-details-content">
                             <div class="col-6 text-start">
                                 <span>Address</span>
-                                <h4>Cumhuriyet mahallesi, Polat Sokak, Özgüvenler Sitesi D:4 HAVSA/EDİRNE</h4>
+                                <h4 th:text="${member.getAddress()}"></h4>
                             </div>
                             <div class="col-6">
                             </div>
@@ -444,7 +487,7 @@
                         <div class="row personal-details-content mt-4">
                             <div class="col-6 text-start">
                                 <span>Country</span>
-                                <h4>Turkey</h4>
+                                <h4 th:text="${member.getCountry()}">Turkey</h4>
                             </div>
                             <div class="col-6 text-end">
 
@@ -453,7 +496,7 @@
                         <div class="row personal-details-content mt-4">
                             <div class="col-6 text-start">
                                 <span>City</span>
-                                <h4>Adana</h4>
+                                <h4 th:text="${member.getCity()}">Adana</h4>
                             </div>
                             <div class="col-6">
                             </div>
@@ -461,7 +504,7 @@
                         <div class="row personal-details-content mt-4">
                             <div class="col-6 text-start">
                                 <span>Phone number</span>
-                                <h4>+90 531 200 6166</h4>
+                                <h4 th:text="${member.getPhoneNumber()}"></h4>
                             </div>
                             <div class="col-6 text-end">
 
@@ -508,7 +551,7 @@
                     </div>
                     <div class="row form-group mt-4">
                         <div class="col-6 text-start">
-                            <button class="btn btn-outline-secondary btn-lg w-100 font-weight-bold" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button class="btn btn-outline-secondary btn-lg w-100 font-weight-bold" type="button" data-dismiss="modal">Cancel</button>
                         </div>
                         <div class="col-6 text-end">
                             <input class="btn btn-danger btn-lg  w-100 font-weight-bold" type="submit" name="Change" value="Change">
@@ -563,41 +606,41 @@
                     </div>
                     <div class="row mt-4">
                         <label>Name</label>
-                        <div class="col-12"><input class="form-control" type="text" id="name"></div>
+                        <div class="col-12"><input class="form-control" th:value="${member.getName()}" type="text" id="name"></div>
                     </div>
                     <div class="row mt-4">
                         <label>Surname</label>
                         <div class="col-12">
-                            <input class="form-control" type="text" id="surname">
+                            <input class="form-control" th:value="${member.getSurname()}" type="text" id="surname">
                         </div>
                     </div>
-                    <div class="row mt-4">
-                        <label>Date of Birth</label>
-                        <div class="col-12">
-                            <input class="form-control" type="text" id="date-of-birth">
-                        </div>
-                    </div>
+<!--                    <div class="row mt-4">-->
+<!--                        <label>Date of Birth</label>-->
+<!--                        <div class="col-12">-->
+<!--                            <input class="form-control" th:value="${member.get}" type="text" id="date-of-birth">-->
+<!--                        </div>-->
+<!--                    </div>-->
                     <div class="row mt-4">
                         <label>Country</label>
                         <div class="col-12">
-                            <input class="form-control" type="text" id="country">
+                            <input class="form-control" th:value="${member.getCountry()}" type="text" id="country">
                         </div>
                     </div>
                     <div class="row mt-4">
                         <label>City</label>
                         <div class="col-12">
-                            <input class="form-control" type="text" id="city">
+                            <input class="form-control" th:value="${member.getCity()}" type="text" id="city">
                         </div>
                     </div>
                     <div class="row mt-4">
                         <label>Email</label>
                         <div class="col-12">
-                            <input class="form-control" type="text" id="email">
+                            <input class="form-control" th:value="${member.getEmail()}" type="text" id="email">
                         </div>
                     </div>
                     <div class="row form-group mt-4">
                         <div class="col-6 text-start">
-                            <button class="btn btn-outline-secondary btn-lg w-100 font-weight-bold" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button class="btn btn-outline-secondary btn-lg w-100 font-weight-bold" type="button" data-dismiss="modal">Cancel</button>
                         </div>
                         <div class="col-6 text-end">
                             <input class="btn btn-danger btn-lg  w-100 font-weight-bold" type="submit" name="update" value="Update details">
@@ -611,23 +654,18 @@
 <div class="modal fade" id="editAddressModal" tabindex="-1" role="dialog" aria-labelledby="changeAddressModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md" role="document">
         <div class="modal-content ">
-            <div class="modal-header">
-                <div class="row">
-                    <div class="col-6"></div>
-                    <div class="col-6 text-end">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                </div>
+            <div class="modal-header card-header">
+                <h5 class="modal-title font-weight-light" id="preferredAddressModalLabel">Preferred Address</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span style="color: white" aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body card-body ">
                 <form class="edit-passenger flex justify-content-start align-items-start">
-
                     <div class="row mt-4">
                         <label for="address">Address</label>
                         <div class="col-12">
-                            <textarea class="form-check w-100" id="address"></textarea>
+                            <textarea th:text="${member.getAddress()}" class="form-check w-100" id="address"></textarea>
                         </div>
                     </div>
                     <div class="row mt-4">
@@ -649,17 +687,80 @@
                     <div class="row mt-4">
                         <label>Phone number</label>
                         <div class="col-4">
-                            <select class="form-select">
-                                <option>+90</option>
+                            <select id="calling_code" class="form-select">
                             </select>
                         </div>
                         <div class="col-8">
-                            <input class="form-control w-100" type="text" id="phone">
+                            <input th:value="${member.getPhoneNumber().substring(member.getPhoneNumber().length() - 10)}" maxlength="10" class="form-control w-100" type="text" id="phone">
                         </div>
                     </div>
                     <div class="row form-group mt-4">
                         <div class="col-6 text-start">
-                            <button class="btn btn-outline-secondary btn-lg w-100 font-weight-bold" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button class="btn btn-outline-secondary btn-lg w-100 font-weight-bold" type="button" data-dismiss="modal">Cancel</button>
+                        </div>
+                        <div class="col-6 text-end">
+                            <input class="btn btn-danger btn-lg  w-100 font-weight-bold" type="submit" name="update" value="Save">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="editCardsModal" tabindex="-1" role="dialog" aria-labelledby="editCardsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header card-header">
+                <h5 class="modal-title font-weight-light" id="addCardModalLabel">Add a new card</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span style="color: white" aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body card-body">
+                <form class="credit-card-form" method="post" th:object="${card}" th:action="@{/cards}">
+                    <div class="form-group">
+                        <label for="card-name">Card Name*</label>
+                        <input type="text" maxlength="20" th:value="${cardEdit != null} ? ${cardEdit.getName()}: ''" class="form-control" id="card-name" name="name" placeholder="Enter card name" required>
+                    </div>
+                    <div class="form-group dropdown">
+                        <label for="card-type">Card Type*</label>
+                        <select id="card-type" name="type" class="form-control w-50 text-center">
+                            <option value="VISA">VISA</option>
+                            <option value="MASTERCARD">MASTERCARD</option>
+                            <option value="AMEX">AMEX</option>
+                            <option value="DISCOVER">DISCOVER</option>
+                            <option value="DINERS">DINERS</option>
+                            <option value="JCB">JCB</option>
+                            <option value="CHINA_UNION_PAY">CHINA_UNION_PAY</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="card-number">Card Number*</label>
+                        <input type="text"
+                               th:value="${cardEdit} ? ${cardEdit.getNumber()}: ''"
+                               class="form-control"
+                               pattern="^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5
+            [0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$"
+                               maxlength="16"
+                               id="card-number" name="number" placeholder="Enter card number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="card-holder">Name on Card*</label>
+                        <input type="text" th:value="${cardEdit} ? ${cardEdit.getCardHolder()}: ''" class="form-control" id="card-holder" name="cardHolder" placeholder="Enter name on card" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="expiry-date">Expiration Date*</label>
+                            <input type="text" th:value="${cardEdit} ? ${cardEdit.getExpDate()}: ''" pattern="([0-9]{2}[/]?){2}" class="form-control" name="expDate" id="expiry-date" placeholder="MM/YY" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="cvv">Security Code*</label>
+                            <input type="text" th:value="${cardEdit} ? ${cardEdit.getCvv()}: ''" class="form-control" maxlength="3" id="cvv" name="cvv" placeholder="Enter CVV" required>
+                        </div>
+                    </div>
+                    <div class="row form-group mt-4">
+                        <div class="col-6 text-start">
+                            <button class="btn btn-outline-secondary btn-lg w-100 font-weight-bold" type="button" data-dismiss="modal">Cancel</button>
                         </div>
                         <div class="col-6 text-end">
                             <input class="btn btn-danger btn-lg  w-100 font-weight-bold" type="submit" name="update" value="Save">
