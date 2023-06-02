@@ -439,49 +439,6 @@
                     <div class="col-6"></div>
                 </div>
             </div>
-            <div class="row mt-4 paymentInfo">
-                <div class="col-12 payment-info">
-                    <div class="row col-12 card-header">
-                        <div class="col-12">
-                            <h5 class="font-weight-light">My payment information</h5>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="row personal-details-content">
-                            <div class="col-6 text-start">
-                                <span>Cardholder name</span>
-                                <h4 th:text="${member.getName().substring(0,2) + '***' + ' ' + member.getSurname().substring(0,2) + '***'}"></h4>
-                            </div>
-                            <div class="col-6 text-end">
-                                <span>Card type</span>
-                                <h4>VISA</h4>
-                            </div>
-                        </div>
-                        <div class="row personal-details-content mt-4">
-                            <div class="col-6 text-start">
-                                <span>Card number</span>
-                                <h4>515755******8971</h4>
-                            </div>
-                            <div class="col-6 text-end">
-                                <span>Expiry date</span>
-                                <h4>08/2028</h4>
-                            </div>
-                        </div>
-                        <div class="row mt-4">
-                            <div class="col-6">
-                                <a class="change-pw" href="#">
-                                    <span class="fs-14">Remove</span>
-                                </a>
-                            </div>
-                            <div class="col-6 text-end">
-                                <a class="change-pw" href="#" data-toggle="modal" data-target="#editCardsModal">
-                                    <span class="fs-14">Add</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
         <div class="col-6 personalDetails-address">
             <div class="row card-header">

@@ -50,7 +50,7 @@ public class ReservationController {
     }
 
     @PostMapping("/booking")
-    public String bookReservation(@ModelAttribute("flightReservationModel") FlightReservationModel flightReservationModel, HttpServletRequest request
+    public String bookReservation(@RequestBody FlightReservationModel flightReservationModel, HttpServletRequest request
     ) throws JsonProcessingException {
         Optional<Member> memberOptional = memberService.extractUser(request);
 
