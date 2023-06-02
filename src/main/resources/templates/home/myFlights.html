@@ -680,7 +680,8 @@
                                                     </button>
                                                 </div>
                                                 <div class="modal-body card-body">
-                                                    <form th:id="${'passengerForm-' + passenger.getId()}" onsubmit="sendReservationInfos(event)" method="post">
+                                                    <form th:id="${'passengerForm-' + passenger.getId()}" th:action="@{/passenger/update}" method="post">
+                                                        <input type="hidden" th:name="id" th:id="id" th:value="${passenger.getId()}">
                                                         <div class="form-row mt-2">
                                                             <div class="form-group col-md-6">
                                                                 <label class="font-weight-bold" th:for="name + ${passenger.getId()}">Name:</label>

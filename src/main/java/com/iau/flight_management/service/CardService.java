@@ -15,6 +15,6 @@ public interface CardService {
     String deleteCard(Long cardId, Member member);
     String saveCard(CardDTO cardDTO, Member member);
     Card findCardById(Long id);
-    boolean checkDuplicateCards(CardDTO cardDTO, Member member);
+    String updateCard(CardDTO cardDTO);
 
 }

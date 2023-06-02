@@ -62,24 +62,19 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public String saveCard(CardDTO cardDTO, Member member) {
+        Card card = Card.builder()
+                .name(cardDTO.getName())
+                .type(cardDTO.getType())
+                .number(cardDTO.getNumber())
+                .cardHolder(cardDTO.getCardHolder())
+                .cvv(cardDTO.getCvv())
+                .expDate(cardDTO.getExpDate())
+                .member(member)
+                .build();
 
-        if (!checkDuplicateCards(cardDTO, member)) {
-            Card card = Card.builder()
-                    .name(cardDTO.getName())
-                    .type(cardDTO.getType())
-                    .number(cardDTO.getNumber())
-                    .cardHolder(cardDTO.getCardHolder())
-                    .cvv(cardDTO.getCvv())
-                    .expDate(cardDTO.getExpDate())
-                    .member(member)
-                    .build();
+        cardRepository.save(card);
 
-            cardRepository.save(card);
-
-            return "redirect:/cards";
-        } else {
-            return "redirect:/cards?duplicate";
-        }
+        return "redirect:/cards";
     }
 
     @Override
@@ -88,16 +83,18 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public boolean checkDuplicateCards(CardDTO cardDTO, Member member) {
-        List<Card> cards = cardRepository.findAllByMemberIs(member);
+    public String updateCard(CardDTO cardDTO) {
+        Card card = cardRepository.findById(cardDTO.getId()).get();
 
-        if (!cards.isEmpty()) {
-            for (Card card : cards) {
-                if (card.getNumber().equals(cardDTO.getNumber())) { // check if the user is trying to save the same card
-                    return true;
-                }
-            }
-        }
-        return false;
+        card.setName(cardDTO.getName());
+        card.setCardHolder(cardDTO.getCardHolder());
+        card.setNumber(cardDTO.getNumber());
+        card.setExpDate(cardDTO.getExpDate());
+        card.setType(cardDTO.getType());
+        card.setCvv(cardDTO.getCvv());
+        cardRepository.save(card);
+
+        return "redirect:/cards";
     }
+
 }

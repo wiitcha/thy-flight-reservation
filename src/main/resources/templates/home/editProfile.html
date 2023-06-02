@@ -244,6 +244,14 @@
 
         let callingCodes = [];
         let callingCodesAndSuffixes = [];
+        let countryAndCities = [];
+
+        document.addEventListener("DOMContentLoaded", function () {
+            let countrySelect = document.getElementById("address-country-select");
+            countrySelect.addEventListener("change", function () {
+                showCitiesOfSelectedCountry();
+            })
+        });
 
         function getCountryAndCallingCodes() {
             fetch('https://restcountries.com/v3.1/independent?status=true&fields=idd')
@@ -282,9 +290,76 @@
             }
         }
 
+        function getCountryAndCities() {
+            let requestOptions = {
+                method: 'GET',
+                redirect: 'follow'
+            };
+
+            let countriesUrl = 'https://countriesnow.space/api/v0.1/countries/states';
+            fetch(countriesUrl, requestOptions)
+                .then((response) => response.json())
+                .then( (response) => {
+                    countryAndCities = response.data;
+                    setCountries();
+                })
+                .catch(error => console.log('error', error));
+        }
+
+        function setCountries() {
+            let countrySelect = document.getElementById("address-country-select");
+
+            for (let i = 0; i < countryAndCities.length; i++) {
+                const countryOption = document.createElement("option");
+                let country = countryAndCities[i];
+                countryOption.text = country.name;
+                countryOption.value = country.name;
+                if (country === memberInfo.country) {
+                    countryOption.selected = true;
+                }
+                countrySelect.appendChild(countryOption);
+            }
+        }
+
+        function showCitiesOfSelectedCountry() {
+            let countrySelect = document.getElementById("address-country-select");
+            let citySelect = document.getElementById("address-city-select");
+            let selectedCountry = countrySelect.options[countrySelect.selectedIndex].value;
+            citySelect.innerHTML = "";
+
+            if (selectedCountry === "") {
+                citySelect.disabled = true;
+            } else {
+                citySelect.disabled = false;
+                for (let i = 0; i < countryAndCities.length; i++) {
+                    const country = countryAndCities[i];
+                    if (country.name === selectedCountry) {
+                        for (let j = 0; j < country.states.length; j++) {
+                            const cityOption = document.createElement("option");
+                            if (country.name === "Turkey") {
+                                cityOption.text = country.states[j].name.split(" ")[0];
+                                cityOption.value = country.states[j].name.split(" ")[0];
+                                if (country.states[j].name.split(" ")[0] === memberInfo.city) {
+                                    cityOption.selected = true;
+                                }
+                            } else {
+                                cityOption.text = country.states[j].name;
+                                cityOption.value = country.states[j].name;
+                                if (country.states[j].name === memberInfo.city) {
+                                    cityOption.selected = true;
+                                }
+                            }
+                            citySelect.appendChild(cityOption);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
     </script>
 </head>
-<body onload="getCountryAndCallingCodes()">
+<body onload="getCountryAndCallingCodes(); getCountryAndCities()">
 <nav class="navbar">
     <div class="navbar-logo">
         <a th:href="@{/home}"><img src="https://cdn.turkishairlines.com/m/2190da9e53a70e4e/original/THY-LOGO.png"
@@ -587,16 +662,6 @@
                         <legend>
                             <h3>Personal Details</h3>
                         </legend>
-                        <div class="row">
-                            <div class="col-md-3 ml-4">
-                                <input class="form-check-input" id="female-gender" type="radio" name="gender" value="Female">
-                                <label class="form-check-label" role="radio" for="female-gender" tabindex="0">Ms.</label>
-                            </div>
-                            <div class="col-md-3 ml-4">
-                                <input class="form-check-input" type="radio" id="male-gender" name="gender" value="Male">
-                                <label class="form-check-label" role="radio" for="female-gender" tabindex="0">Mr.</label>
-                            </div>
-                        </div>
                     </fieldset>
                     <div class="row mt-4">
                         <label>Academic Title</label>
@@ -661,17 +726,17 @@
                 </button>
             </div>
             <div class="modal-body card-body ">
-                <form class="edit-passenger flex justify-content-start align-items-start">
+                <form class="edit-passenger flex justify-content-start align-items-start" th:action="@{/profile/preferredAddress}" method="post">
                     <div class="row mt-4">
                         <label for="address">Address</label>
                         <div class="col-12">
-                            <textarea th:text="${member.getAddress()}" class="form-check w-100" id="address"></textarea>
+                            <textarea th:text="${member.getAddress()}" class="form-check w-100" name="address" id="address"></textarea>
                         </div>
                     </div>
                     <div class="row mt-4">
                         <div class="col-12">
                             <label>Country</label>
-                            <select class="form-select">
+                            <select class="form-select" id="address-country-select" name="country">
                                 <option>Turkey</option>
                             </select>
                         </div>
@@ -679,19 +744,19 @@
                     <div class="row mt-4">
                         <div class="col-12">
                             <label>City</label>
-                            <select class="form-select">
-                                <option>Edirne</option>
+                            <select class="form-select" id="address-city-select" name="city">
+                                <option>Istanbul</option>
                             </select>
                         </div>
                     </div>
                     <div class="row mt-4">
                         <label>Phone number</label>
                         <div class="col-4">
-                            <select id="calling_code" class="form-select">
+                            <select id="calling_code" class="form-select" name="phoneNumber">
                             </select>
                         </div>
                         <div class="col-8">
-                            <input th:value="${member.getPhoneNumber().substring(member.getPhoneNumber().length() - 10)}" maxlength="10" class="form-control w-100" type="text" id="phone">
+                            <input th:value="${member.getPhoneNumber().substring(member.getPhoneNumber().length() - 10)}" name="phoneNumber" maxlength="10" class="form-control w-100" type="text" id="phone">
                         </div>
                     </div>
                     <div class="row form-group mt-4">

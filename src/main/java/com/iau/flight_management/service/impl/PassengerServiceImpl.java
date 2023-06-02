@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -35,5 +36,17 @@ public class PassengerServiceImpl implements PassengerService {
         }
 
         return passengers;
+    }
+
+    @Override
+    public Passenger updatePassenger(PassengerDTO passengerDTO) {
+        Passenger passenger = passengerRepository.findById(passengerDTO.getId()).get();
+
+        passenger.setName(passengerDTO.getName());
+        passenger.setSurname(passengerDTO.getSurname());
+        passenger.setGender(passengerDTO.getGender());
+        passenger.setDateOfBirth(passengerDTO.getDateOfBirth());
+        passenger.setPhoneNumber(passengerDTO.getPhoneNumber());
+        return passengerRepository.save(passenger);
     }
 }

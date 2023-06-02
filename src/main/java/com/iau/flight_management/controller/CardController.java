@@ -1,6 +1,7 @@
 package com.iau.flight_management.controller;
 
 import com.iau.flight_management.model.dto.CardDTO;
+import com.iau.flight_management.model.entity.Card;
 import com.iau.flight_management.model.entity.Member;
 import com.iau.flight_management.security.config.JwtService;
 import com.iau.flight_management.service.CardService;
@@ -11,6 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -65,5 +68,16 @@ public class CardController {
             return cardService.deleteCard(cardId, member);
         }
         return SECURITY_LOGOUT;
+    }
+
+    @PostMapping("/update")
+    public String updateCard(@ModelAttribute CardDTO cardDTO, HttpServletRequest request) {
+        Optional<Member> optionalMember = memberService.extractUser(request);
+
+        if (optionalMember.isPresent()) {
+            return cardService.updateCard(cardDTO);
+        } else {
+            return SECURITY_LOGOUT;
+        }
     }
 }

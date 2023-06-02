@@ -389,12 +389,6 @@
                 console.log(error)
             }
 
-            // const form = document.querySelector('#reservationForm');
-            // const formData = new FormData(form);
-            // const myMap = new Map(Object.entries(searchParameters));
-            //
-            // formData.set('myMap', JSON.stringify(Object.fromEntries(myMap.entries())));
-
             fetch('/reservations/booking', {
                 method: 'POST',
                 headers: {
@@ -672,7 +666,7 @@
                 <a title="Cancel reservation" class="cancel-button btn pull pull-right font-weight-bold" onclick="showFlights()">
                     <i class="fa fa-times" aria-hidden="true"></i>
                 </a>
-                <form id="reservationForm" onsubmit="sendReservationInfos(event)" method="post">
+                <form id="reservationForm" onsubmit="sendReservationInfos(event)" th:object="${flightReservationModel}" method="post">
                     <div th:each="i : ${#numbers.sequence(1, searchParameters.get('passengers'))}" class="mt-3">
                         <h6 class="font-weight-bold" th:text="'Passenger ' + ${i}" style="color: #0e67e4; width: 2000px"></h6>
 

@@ -306,7 +306,8 @@
 
 <span th:if="!${hasAnyCard} or (${param.edit != null}) or ${param.new}">
     <div class="center">
-    <form class="credit-card-form" method="post" th:object="${card}" th:action="@{/cards}">
+    <form class="credit-card-form" method="post" th:object="${card}" th:action="${param.edit != null ? '/cards/update' : '/cards'}">
+        <input type="hidden" name="id" th:value="${param.edit != null} ? ${cardEdit.getId()} : ''">
         <div th:if="${param.deleteSuccess}">
                 <div class="alert alert-success col-xs-offset-1 col-xs-10 text-center">
                     <em>Card successfully deleted!</em>

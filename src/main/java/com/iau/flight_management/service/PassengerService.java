@@ -8,4 +8,5 @@ import java.util.List;
 public interface PassengerService {
 
     List<Passenger> savePassengers(List<PassengerDTO> passengerDTOS);
+    Passenger updatePassenger(PassengerDTO passengerDTO);
 }
